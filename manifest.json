@@ -1,0 +1,28 @@
+{
+    "manifest_version": 3,
+    "name": "My Chrome Extension",
+    "version": "1.0",
+    "description": "A simple Chrome extension.",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "tabs"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "48": "images/icon48.png"
+        }
+    },
+    "content_scripts": [
+    {
+      "js": ["scripts/content.js"],
+      "matches": [
+        "https://www.mcmaster.com/*"
+      ]
+    }
+  ]
+}
