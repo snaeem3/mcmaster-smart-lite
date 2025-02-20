@@ -9,17 +9,17 @@
         "tabs"
     ],
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "assets/background.js"
     },
     "action": {
-        "default_popup": "popup.html",
+        "default_popup": "assets/popup.html",
         "default_icon": {
-            "48": "images/icon48.png"
+            "48": "assets/icon48.png"
         }
     },
     "content_scripts": [
     {
-      "js": ["scripts/content.js"],
+      "js": ["assets/content.js"],
       "matches": [
         "https://www.mcmaster.com/*"
       ]
