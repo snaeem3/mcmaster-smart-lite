@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "build:bundle": "rollup -c"
+    "build:bundle": "rollup -c",
+    "watch:bundle": "rollup -c --watch"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,8 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.20.0",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/chrome": "^0.0.304",
     "eslint": "^9.20.1",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",

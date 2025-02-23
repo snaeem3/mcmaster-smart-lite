@@ -1,9 +1,9 @@
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Extension installed!');
+  console.log("Extension installed!");
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'openPopup') {
+  if (message.action === "openPopup") {
     chrome.action.openPopup();
   }
 });
