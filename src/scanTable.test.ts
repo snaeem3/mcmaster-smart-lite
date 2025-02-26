@@ -67,7 +67,7 @@ test("Reads a subtable noted with 'indented' in the className", () => {
   td10.textContent = "Nylon Plastic";
 
   tableRow3.className = "indented";
-  tableRow4.className = "indented";
+  tableRow4.className = "-indented_";
 
   tableRow2.appendChild(td3);
   tableRow2.appendChild(td4);
