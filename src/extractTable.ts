@@ -1,4 +1,4 @@
-export default function scanTable(table: HTMLTableElement) {
+export default function extractTable(table: HTMLTableElement) {
   const result = new Map<string, string | Map<string, string>>();
   let tempMap = new Map<string, string>();
   let tempSubTableName = "";

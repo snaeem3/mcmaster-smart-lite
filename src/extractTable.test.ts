@@ -1,5 +1,5 @@
 import { beforeEach, expect, test } from "vitest";
-import scanTable from "./scanTable";
+import extractTable from "./extractTable";
 
 let container: HTMLDivElement;
 let table: HTMLTableElement;
@@ -36,7 +36,7 @@ test("Reads a single row", () => {
 
   const expectedResult = new Map();
   expectedResult.set("Length", '8"');
-  expect(scanTable(table)).toEqual(expectedResult);
+  expect(extractTable(table)).toEqual(expectedResult);
 });
 
 test("Reads a subtable noted with 'indented' in the className", () => {
@@ -90,7 +90,7 @@ test("Reads a subtable noted with 'indented' in the className", () => {
   expectedSubTable.set("Width", '1 1/8"');
   expectedResult.set("Tag", expectedSubTable);
   expectedResult.set("Material", "Nylon Plastic");
-  expect(scanTable(table)).toEqual(expectedResult);
+  expect(extractTable(table)).toEqual(expectedResult);
   // expect(scanTable(table)).toEqual({
   //   Length: '8"',
   //   Tag: { Length: '1"', Width: '1 1/8"' },
