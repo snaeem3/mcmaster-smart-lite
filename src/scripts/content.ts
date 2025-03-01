@@ -1,4 +1,4 @@
-import Item, { ItemFeature, Price } from "../Item";
+import Item from "../Item";
 import extractTable from "../extractTable";
 chrome.runtime.sendMessage({ action: "openPopup" });
 console.log("Content script running on a whitelisted site.");
@@ -7,13 +7,13 @@ console.log("Content script running on a whitelisted site.");
   const scanPage = () => {
     const title = document.querySelector("h1")?.textContent;
     const table = document.querySelector("table");
+    // TODO: extract price
 
-    const pageMap = new Map();
-    pageMap.set("Title", title);
-    if (table) pageMap.set("Item Features", extractTable(table));
-    console.log("pageMap");
-    console.table(pageMap);
-    return pageMap;
+    const pageObj: Partial<Item> = { primaryName: "" };
+    if (title) pageObj.primaryName = title;
+    if (table) pageObj.itemFeatures = extractTable(table);
+
+    return pageObj;
   };
 
   chrome.runtime.onMessage.addListener((msg, sender, response) => {
@@ -23,7 +23,6 @@ console.log("Content script running on a whitelisted site.");
     console.log("result: ", result);
     // return results to popup
     // Note: Maps can not be passed through response() for some reason
-    // Convert Map --> Object before sending
-    if (result) response(Object.fromEntries(result));
+    if (result) response(result);
   });
 })();

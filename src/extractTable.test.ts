@@ -34,9 +34,12 @@ test("Reads a single row", () => {
   tableBody.appendChild(tableRow);
   table.appendChild(tableBody);
 
-  const expectedResult = new Map();
-  expectedResult.set("Length", '8"');
-  expect(extractTable(table)).toEqual(expectedResult);
+  // const expectedResult = new Map();
+  // expectedResult.set("Length", '8"');
+  // expect(extractTable(table)).toEqual(expectedResult);
+  expect(extractTable(table)).toEqual({
+    Length: '8"',
+  });
 });
 
 test("Reads a subtable noted with 'indented' in the className", () => {
@@ -83,17 +86,17 @@ test("Reads a subtable noted with 'indented' in the className", () => {
   tableBody.appendChild(tableRow5);
   table.appendChild(tableBody);
 
-  const expectedResult = new Map();
-  const expectedSubTable = new Map();
-  expectedResult.set("Length", '8"');
-  expectedSubTable.set("Length", '1"');
-  expectedSubTable.set("Width", '1 1/8"');
-  expectedResult.set("Tag", expectedSubTable);
-  expectedResult.set("Material", "Nylon Plastic");
-  expect(extractTable(table)).toEqual(expectedResult);
-  // expect(scanTable(table)).toEqual({
-  //   Length: '8"',
-  //   Tag: { Length: '1"', Width: '1 1/8"' },
-  //   Material: "Nylon Plastic",
-  // });
+  // const expectedResult = new Map();
+  // const expectedSubTable = new Map();
+  // expectedResult.set("Length", '8"');
+  // expectedSubTable.set("Length", '1"');
+  // expectedSubTable.set("Width", '1 1/8"');
+  // expectedResult.set("Tag", expectedSubTable);
+  // expectedResult.set("Material", "Nylon Plastic");
+  // expect(extractTable(table)).toEqual(expectedResult);
+  expect(extractTable(table)).toEqual({
+    Length: '8"',
+    Tag: { Length: '1"', Width: '1 1/8"' },
+    Material: "Nylon Plastic",
+  });
 });

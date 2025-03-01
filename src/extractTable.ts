@@ -1,6 +1,6 @@
 export default function extractTable(table: HTMLTableElement) {
-  const result = new Map<string, string | Map<string, string>>();
-  let tempMap = new Map<string, string>();
+  const result: Record<string, string | Record<string, string>> = {};
+  let tempMap: Record<string, string> = {};
   let tempSubTableName = "";
 
   for (let i = 0; i < table.rows.length; i++) {
@@ -11,20 +11,20 @@ export default function extractTable(table: HTMLTableElement) {
 
     if (isIndented && key && value) {
       // If this row is indented just add it to tempMap
-      tempMap.set(key, value);
+      tempMap[key] = value;
     } else if (!isIndented && key) {
       // This row is not part of a sub table
-      if (tempMap.size > 0) {
+      if (Object.keys(tempMap).length > 0) {
         // add current sub table to result if there is one
-        result.set(tempSubTableName, tempMap);
-        tempMap = new Map<string, string>();
+        result[tempSubTableName] = tempMap;
+        tempMap = {};
       }
       tempSubTableName = key;
-      if (value) result.set(key, value);
+      if (value) result[key] = value;
     }
   }
-  if (tempMap.size > 0) {
-    result.set(tempSubTableName, tempMap);
+  if (Object.keys(tempMap).length > 0) {
+    result[tempSubTableName] = tempMap;
   }
 
   return result;
