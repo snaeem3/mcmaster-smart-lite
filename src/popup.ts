@@ -13,24 +13,19 @@ const setExtractedInfo = (productMap: Partial<Item>) => {
   if (productMap.primaryName) setTitle(productMap.primaryName);
 };
 
-const handleButtonClick = async () => {
-  const activeTab = await chrome.tabs.query({
-    active: true,
-    currentWindow: true,
+const handleButtonClick = async (url = "https://www.mscdirect.com") => {
+  const window = await chrome.windows.create({
+    url: url,
+    type: "popup",
   });
-  console.log("activeTab: ", activeTab);
-  if (activeTab && activeTab[0].id) {
-    chrome.tabs.sendMessage(
-      activeTab[0].id,
-      { type: "SCAN" },
-      (pageObj: Partial<Item>) => setExtractedInfo(pageObj),
-    );
-  }
-  alert("Button clicked!");
+
+  setTimeout(() => {
+    if (window.id) chrome.windows.remove(window.id);
+  }, 2000);
 };
 
 if (clickMeButton) {
-  clickMeButton.addEventListener("click", handleButtonClick);
+  clickMeButton.addEventListener("click", () => handleButtonClick());
 }
 
 if (itemTitle) {
