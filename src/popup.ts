@@ -19,6 +19,22 @@ const handleButtonClick = async (url = "https://www.mscdirect.com") => {
     type: "popup",
   });
 
+  const tabs = await chrome.tabs.query({ windowId: window.id });
+  const tab = tabs[0];
+  console.log("hopeful msc tab: ", tab);
+  if (tab.id) {
+    chrome.scripting.executeScript(
+      {
+        func: () => {
+          document.title = "title changed by executeScript";
+          console.log("chrome func"); // this would appear on the msc window console
+        },
+        target: { tabId: tab.id },
+      },
+      () => console.log("executeScript callBackFunction called"),
+    );
+  }
+
   setTimeout(() => {
     if (window.id) chrome.windows.remove(window.id);
   }, 2000);

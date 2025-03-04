@@ -4,9 +4,12 @@
     "version": "1.0",
     "description": "A simple Chrome extension.",
     "permissions": [
-        "storage",
+        "scripting",
         "activeTab",
         "tabs"
+    ],
+    "host_permissions": [
+      "https://www.mscdirect.com/*"
     ],
     "background": {
         "service_worker": "assets/background.js"
