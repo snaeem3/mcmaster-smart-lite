@@ -28,10 +28,13 @@ const handleButtonClick = async (url = "https://www.mscdirect.com") => {
         func: () => {
           document.title = "title changed by executeScript";
           console.log("chrome func"); // this would appear on the msc window console
+          return {
+            documentTitle: document.title,
+          };
         },
         target: { tabId: tab.id },
       },
-      () => console.log("executeScript callBackFunction called"),
+      (results) => console.log("results: ", results[0].result),
     );
   }
 
