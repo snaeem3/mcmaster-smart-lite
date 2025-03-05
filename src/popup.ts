@@ -1,4 +1,5 @@
 import Item from "./Item";
+import extractMSCSearchResults from "./msc/extractMSCSearchResults";
 import getActiveTabURL from "./utils/getActiveTabURL";
 
 const clickMeButton = document.getElementById("clickMe");
@@ -13,7 +14,9 @@ const setExtractedInfo = (productMap: Partial<Item>) => {
   if (productMap.primaryName) setTitle(productMap.primaryName);
 };
 
-const handleButtonClick = async (url = "https://www.mscdirect.com") => {
+const handleButtonClick = async (
+  url = "https://www.mscdirect.com/browse/tn?rd=k&searchterm=ID+Tag+Cable+Tie",
+) => {
   const window = await chrome.windows.create({
     url: url,
     type: "popup",
@@ -22,25 +25,20 @@ const handleButtonClick = async (url = "https://www.mscdirect.com") => {
   const tabs = await chrome.tabs.query({ windowId: window.id });
   const tab = tabs[0];
   console.log("hopeful msc tab: ", tab);
+
   if (tab.id) {
     chrome.scripting.executeScript(
       {
-        func: () => {
-          document.title = "title changed by executeScript";
-          console.log("chrome func"); // this would appear on the msc window console
-          return {
-            documentTitle: document.title,
-          };
-        },
+        func: extractMSCSearchResults,
         target: { tabId: tab.id },
       },
-      (results) => console.log("results: ", results[0].result),
+      (results) => console.log("results: ", results),
     );
   }
 
   setTimeout(() => {
     if (window.id) chrome.windows.remove(window.id);
-  }, 2000);
+  }, 15000);
 };
 
 if (clickMeButton) {

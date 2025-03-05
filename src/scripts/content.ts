@@ -1,4 +1,4 @@
-import Item from "../Item";
+import { McMasterItem } from "../Item";
 import extractTable from "../extractTable";
 chrome.runtime.sendMessage({ action: "openPopup" });
 console.log("Content script running on a whitelisted site.");
@@ -9,7 +9,7 @@ console.log("Content script running on a whitelisted site.");
     const table = document.querySelector("table");
     // TODO: extract price
 
-    const pageObj: Partial<Item> = { primaryName: "" };
+    const pageObj: Partial<McMasterItem> = { primaryName: "" };
     if (title) pageObj.primaryName = title;
     if (table) pageObj.itemFeatures = extractTable(table);
 
