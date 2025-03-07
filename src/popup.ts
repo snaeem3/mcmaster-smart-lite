@@ -27,18 +27,21 @@ const handleButtonClick = async (
   console.log("hopeful msc tab: ", tab);
 
   if (tab.id) {
-    chrome.scripting.executeScript(
-      {
-        func: extractMSCSearchResults,
-        target: { tabId: tab.id },
-      },
-      (results) => console.log("results: ", results),
-    );
+    chrome.scripting
+      .executeScript(
+        {
+          func: extractMSCSearchResults,
+          target: { tabId: tab.id },
+        },
+        // (results) => console.log("results: ", results),
+      )
+      .then((injectionResults) => {
+        for (const { frameId, result } of injectionResults) {
+          console.log(`Frame ${frameId} result:`, result);
+        }
+        if (window.id) chrome.windows.remove(window.id);
+      });
   }
-
-  setTimeout(() => {
-    if (window.id) chrome.windows.remove(window.id);
-  }, 15000);
 };
 
 if (clickMeButton) {
