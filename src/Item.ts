@@ -4,6 +4,7 @@ export interface Item {
   packageQuantity: number;
   secondaryName?: string;
   description?: string;
+  url: string | URL;
 }
 
 export interface McMasterItem extends Item {

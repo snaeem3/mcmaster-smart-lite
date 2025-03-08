@@ -59,6 +59,12 @@ export default function extractMSCSearchResults(
     if (dataPrice) mscItem.totalPrice = parseFloat(dataPrice);
     if (dataPricingUnit) mscItem.packageQuantity = parseInt(dataPricingUnit);
 
+    const productLink = productDescriptionDiv?.querySelector("a")?.href;
+    if (productLink) {
+      // const productURL = new URL(productLink, "https://mscdirect.com/");
+      mscItem.url = productLink;
+    }
+
     return mscItem;
   }
 
