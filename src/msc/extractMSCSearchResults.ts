@@ -1,12 +1,14 @@
-import MSCItem from "./MSCItem";
+// import { Price } from "../Item";
+import { MSCItem } from "./MSCItem";
 
 export default function extractMSCSearchResults(
   querySelector = "#ListSearchResults",
 ) {
+  const MSCsearchResults = document.querySelector(querySelector);
+  if (!(MSCsearchResults instanceof HTMLDivElement))
+    throw new Error(`${querySelector} is an invalid querySelector`);
   try {
-    const MSCsearchResults = document.querySelector(querySelector);
-    if (MSCsearchResults instanceof HTMLDivElement)
-      return extractSearchResults(MSCsearchResults);
+    return extractSearchResults(MSCsearchResults);
   } catch (error) {
     console.error(error);
     throw new Error("Error obtaining MSCsearchResult");
@@ -51,6 +53,11 @@ export default function extractMSCSearchResults(
     if (typeof secondaryDescText === "string")
       mscItem.secondaryName = secondaryDescText;
     // TODO: determine inStock status from inStockText
+
+    const dataPrice = searchResultDiv.getAttribute("data-price");
+    const dataPricingUnit = searchResultDiv.getAttribute("data-pricing-unit");
+    if (dataPrice) mscItem.totalPrice = parseFloat(dataPrice);
+    if (dataPricingUnit) mscItem.packageQuantity = parseInt(dataPricingUnit);
 
     return mscItem;
   }

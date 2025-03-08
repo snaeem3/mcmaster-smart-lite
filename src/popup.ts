@@ -1,4 +1,4 @@
-import Item from "./Item";
+import { Item } from "./Item";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
 import getActiveTabURL from "./utils/getActiveTabURL";
 
@@ -36,6 +36,7 @@ const handleButtonClick = async (
         // (results) => console.log("results: ", results),
       )
       .then((injectionResults) => {
+        console.log("injectionResults: ", injectionResults);
         for (const { frameId, result } of injectionResults) {
           console.log(`Frame ${frameId} result:`, result);
         }
