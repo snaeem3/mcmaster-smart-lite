@@ -46,10 +46,13 @@ export default function extractMSCSearchResults(
       productDescriptionTexts && productDescriptionTexts[3].textContent?.trim();
 
     const mscItem: Partial<MSCItem> = {};
+    if (typeof primaryDescText === "string") {
+      const { primaryName, desc } = extractPrimaryNameAndDesc(primaryDescText);
+      mscItem.primaryName = primaryName;
+      mscItem.description = desc;
+    }
     if (typeof manufacturerText === "string")
       mscItem.manufacturer = manufacturerText;
-    if (typeof primaryDescText === "string")
-      mscItem.primaryName = extractPrimaryName(primaryDescText);
     if (typeof secondaryDescText === "string")
       mscItem.secondaryName = secondaryDescText;
     // TODO: determine inStock status from inStockText
@@ -70,13 +73,13 @@ export default function extractMSCSearchResults(
 
   // TODO: write unit tests for this function
   // Assume the primary name of an MSC item to be all text before the first ':' or ';'
-  function extractPrimaryName(primaryDescText: string) {
+  function extractPrimaryNameAndDesc(primaryDescText: string) {
     let firstDescriptionSeparator;
     try {
       firstDescriptionSeparator = checkSemicolonVsColon(primaryDescText);
     } catch (error) {
       console.warn(error);
-      return primaryDescText;
+      return { primaryName: primaryDescText, desc: "" };
     }
     let splitPrimaryDescText: string[];
     if (firstDescriptionSeparator == ";") {
@@ -85,7 +88,9 @@ export default function extractMSCSearchResults(
       splitPrimaryDescText = primaryDescText.split(":");
     }
 
-    return splitPrimaryDescText[0];
+    const [primaryName, ...desc] = splitPrimaryDescText;
+
+    return { primaryName, desc: desc.join(firstDescriptionSeparator) };
   }
 
   // Helper function to analyze MSC description title for ';' or ':'
