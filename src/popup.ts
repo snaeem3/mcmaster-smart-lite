@@ -2,6 +2,7 @@ import { Item, McMasterItem } from "./Item";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
 import getActiveTabURL from "./utils/getActiveTabURL";
 import executeFuncOnWindow from "./executeFuncOnWindow";
+import createSearchQueries from "./createSearchQueries";
 
 const clickMeButton = document.getElementById("clickMe");
 const itemTitle = document.getElementById("item-title");
@@ -22,27 +23,35 @@ const handleButtonClick = async () => {
   });
   console.log("activeTab: ", activeTab);
 
-  let pageObj: Partial<McMasterItem>;
+  let mcmasterItem: Partial<McMasterItem> = {};
   if (activeTab && activeTab[0].id) {
     try {
-      pageObj = await chrome.tabs.sendMessage(activeTab[0].id, {
+      mcmasterItem = await chrome.tabs.sendMessage(activeTab[0].id, {
         type: "SCAN",
       });
-      setExtractedInfo(pageObj);
+      setExtractedInfo(mcmasterItem);
     } catch (error) {
       console.error("Error scanning McMaster page", error);
     }
   }
 
   // Create search queries from extracted mcmaster data
+  const searchQueries = createSearchQueries(mcmasterItem);
+  console.log("searchQueries: ", searchQueries.toLocaleString());
 
   // Execute MSC scripts using created search queries
 
-  const url =
+  const testURL =
     "https://www.mscdirect.com/browse/tn?rd=k&searchterm=ID+Tag+Cable+Tie";
 
+  const urls = searchQueries.map(
+    (searchQuery) =>
+      `https://www.mscdirect.com/browse/tn?rd=k&${searchQuery.toString()}`,
+  );
+
+  // TODO: Update to create a search for all urls
   const window = await chrome.windows.create({
-    url: url,
+    url: urls[0],
     type: "popup",
   });
 

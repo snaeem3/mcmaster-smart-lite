@@ -6,11 +6,16 @@ console.log("Content script running on a whitelisted site.");
 (() => {
   const scanPage = () => {
     const title = document.querySelector("h1")?.textContent;
+    const h3 = document.querySelector("h3")?.textContent;
     const table = document.querySelector("table");
     // TODO: extract price
 
-    const pageObj: Partial<McMasterItem> = { primaryName: "" };
+    const pageObj: Partial<McMasterItem> = {
+      primaryName: "",
+      secondaryName: "",
+    };
     if (title) pageObj.primaryName = title;
+    if (h3) pageObj.secondaryName = h3;
     if (table) pageObj.itemFeatures = extractTable(table);
 
     return pageObj;

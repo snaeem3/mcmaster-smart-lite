@@ -1,6 +1,9 @@
 import { McMasterItem } from "./Item";
 
-export default function createSearchQueries(McMasterItem: McMasterItem) {
+export default function createSearchQueries(
+  McMasterItem: Partial<McMasterItem>,
+) {
+  console.log(McMasterItem);
   const results: URLSearchParams[] = [];
   /*
    *    Idea 1: use the first n features, they are probably the most important
@@ -13,10 +16,15 @@ export default function createSearchQueries(McMasterItem: McMasterItem) {
 
   let searchParams: URLSearchParams;
   // Method 1- primary name only
-  searchParams = new URLSearchParams({ searchterm: McMasterItem.primaryName });
-  results.push(searchParams);
+  if (McMasterItem.primaryName) {
+    searchParams = new URLSearchParams({
+      searchterm: McMasterItem.primaryName,
+    });
+    results.push(searchParams);
+  }
 
   // Method 2- combine primary name and secondary name
+  console.log("McMasterItem.secondaryName: ", McMasterItem.secondaryName);
   searchParams = new URLSearchParams({
     searchterm: `${McMasterItem.primaryName} ${McMasterItem.secondaryName}`,
   });
