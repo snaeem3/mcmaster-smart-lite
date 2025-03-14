@@ -1,4 +1,18 @@
-export default async function executeFuncOnWindow(
+export default async function executeFuncOnURL(
+  url: string,
+  func: () => void,
+  type: chrome.windows.createTypeEnum = "popup",
+) {
+  const window = await chrome.windows.create({
+    url: url,
+    type: type,
+  });
+
+  const result = await executeFuncOnWindow(window, func);
+  return result;
+}
+
+async function executeFuncOnWindow(
   window: chrome.windows.Window,
   func: () => void,
 ) {

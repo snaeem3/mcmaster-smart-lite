@@ -1,8 +1,8 @@
 import { Item, McMasterItem } from "./Item";
-import extractMSCSearchResults from "./msc/extractMSCSearchResults";
 import getActiveTabURL from "./utils/getActiveTabURL";
-import executeFuncOnWindow from "./executeFuncOnWindow";
 import createSearchQueries from "./createSearchQueries";
+import executeFuncOnURL from "./executeFuncOnURL";
+import extractMSCSearchResults from "./msc/extractMSCSearchResults";
 
 const clickMeButton = document.getElementById("clickMe");
 const itemTitle = document.getElementById("item-title");
@@ -39,8 +39,6 @@ const handleButtonClick = async () => {
   const searchQueries = createSearchQueries(mcmasterItem);
   console.log("searchQueries: ", searchQueries.toLocaleString());
 
-  // Execute MSC scripts using created search queries
-
   const testURL =
     "https://www.mscdirect.com/browse/tn?rd=k&searchterm=ID+Tag+Cable+Tie";
 
@@ -49,16 +47,11 @@ const handleButtonClick = async () => {
       `https://www.mscdirect.com/browse/tn?rd=k&${searchQuery.toString()}`,
   );
 
-  // TODO: Update to create a search for all urls
-  const window = await chrome.windows.create({
-    url: urls[0],
-    type: "popup",
-  });
-
-  const windowResults = await executeFuncOnWindow(
-    window,
-    extractMSCSearchResults,
+  // Execute MSC scripts using created search queries
+  const windowResults = await Promise.all(
+    urls.map((url) => executeFuncOnURL(url, extractMSCSearchResults)),
   );
+  console.log(windowResults);
 };
 
 if (clickMeButton) {
