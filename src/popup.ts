@@ -3,6 +3,7 @@ import getActiveTabURL from "./utils/getActiveTabURL";
 import createSearchQueries from "./createSearchQueries";
 import executeFuncOnURL from "./executeFuncOnURL";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
+import getBestMatchingProduct from "./bestMatchingProduct";
 
 const clickMeButton = document.getElementById("clickMe");
 const itemTitle = document.getElementById("item-title");
@@ -47,11 +48,27 @@ const handleButtonClick = async () => {
       `https://www.mscdirect.com/browse/tn?rd=k&${searchQuery.toString()}`,
   );
 
+  // TODO: Add try-catch below?
   // Execute MSC scripts using created search queries
   const windowResults = await Promise.all(
     urls.map((url) => executeFuncOnURL(url, extractMSCSearchResults)),
   );
   console.log(windowResults);
+
+  const searchResults = windowResults
+    .filter((windowResult) => windowResult !== undefined)
+    .map((windowResult) => windowResult[0].result);
+
+  console.log("searchResults: ", searchResults);
+
+  for (const searchResult of searchResults) {
+    if (searchResult === undefined) continue;
+    try {
+      console.log(getBestMatchingProduct(mcmasterItem, searchResult, 0.2));
+    } catch (error) {
+      console.error(error);
+    }
+  }
 };
 
 if (clickMeButton) {

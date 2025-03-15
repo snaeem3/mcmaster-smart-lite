@@ -1,4 +1,6 @@
 import typescript from "@rollup/plugin-typescript";
+import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
 import copy from "rollup-plugin-copy";
 
 const rollup = {
@@ -13,6 +15,8 @@ const rollup = {
   },
   plugins: [
     typescript(),
+    resolve({ browser: true }),
+    commonjs(),
     copy({
       targets: [
         { src: "./src/manifest.json", dest: "distribution" },

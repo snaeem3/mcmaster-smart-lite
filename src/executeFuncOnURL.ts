@@ -1,6 +1,9 @@
+import { MSCItem } from "./msc/MSCItem";
+
 export default async function executeFuncOnURL(
   url: string,
-  func: () => void,
+  func: (s?: string) => Partial<MSCItem>[],
+  funcArgs?: string,
   type: chrome.windows.createTypeEnum = "popup",
 ) {
   const window = await chrome.windows.create({
@@ -14,7 +17,8 @@ export default async function executeFuncOnURL(
 
 async function executeFuncOnWindow(
   window: chrome.windows.Window,
-  func: () => void,
+  func: (s?: string) => Partial<MSCItem>[],
+  funcArgs?: string,
 ) {
   try {
     if (!window.id) {
@@ -33,6 +37,7 @@ async function executeFuncOnWindow(
     const injectionResults = await chrome.scripting.executeScript({
       func: func,
       target: { tabId: tab.id },
+      // args: [funcArgs],
     });
 
     console.log("injectionResults: ", injectionResults);

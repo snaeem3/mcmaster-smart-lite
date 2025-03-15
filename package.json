@@ -16,6 +16,8 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.20.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/chrome": "^0.0.304",
     "eslint": "^9.20.1",
@@ -29,5 +31,8 @@
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.24.0",
     "vitest": "^3.0.7"
+  },
+  "dependencies": {
+    "string-similarity-js": "^2.1.4"
   }
 }
