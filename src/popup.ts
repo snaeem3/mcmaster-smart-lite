@@ -4,10 +4,18 @@ import createSearchQueries from "./createSearchQueries";
 import executeFuncOnURL from "./executeFuncOnURL";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
 import getBestMatchingProduct from "./bestMatchingProduct";
+import { MSCItem } from "./msc/MSCItem";
 
 const clickMeButton = document.getElementById("clickMe");
 const itemTitle = document.getElementById("item-title");
 // const itemInfo = document.getElementById("item-info");
+const matchList = document.getElementById("match-list");
+const bestMatchProductListItem = matchList?.querySelector(
+  "#best-match-product",
+);
+const bestMatchProductA = bestMatchProductListItem?.querySelector("a");
+const bestMatchProductTitle = bestMatchProductListItem?.querySelector("h4");
+const bestMatchProductP = bestMatchProductListItem?.querySelector("p");
 
 const setTitle = (title: string) => {
   if (itemTitle) itemTitle.textContent = title;
@@ -15,6 +23,17 @@ const setTitle = (title: string) => {
 
 const setExtractedInfo = (productMap: Partial<Item>) => {
   if (productMap.primaryName) setTitle(productMap.primaryName);
+};
+
+const setBestMatchedProduct = (mscItem: Partial<MSCItem>, score: number) => {
+  if (bestMatchProductTitle && mscItem.primaryName)
+    bestMatchProductTitle.textContent = mscItem.primaryName;
+
+  if (bestMatchProductA && mscItem.url)
+    bestMatchProductA.href = mscItem.url.toString();
+
+  if (bestMatchProductP)
+    bestMatchProductP.textContent = `Match: ${Math.round((score + Number.EPSILON) * 100) / 100}`;
 };
 
 const handleButtonClick = async () => {
@@ -69,9 +88,10 @@ const handleButtonClick = async () => {
       0.2,
     );
     if (error) console.error(error);
-    else {
+    else if (bestProduct) {
       console.log("bestProduct: ", bestProduct);
       console.log("score: ", score);
+      setBestMatchedProduct(bestProduct, score);
     }
   }
 };
