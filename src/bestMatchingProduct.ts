@@ -17,13 +17,12 @@ export default function getBestMatchingProduct(
     current.score > best.score ? current : best,
   );
 
-  if (bestMatch.score < minScore) {
-    throw new Error(
-      `No matching product found with a score above the minimum threshold (${minScore}). Highest Score: ${bestMatch.score}`,
-    );
-  }
-
-  return { bestProduct: bestMatch.product, score: bestMatch.score };
+  return bestMatch.score < minScore
+    ? {
+        error: `No matching product found with a score above the minimum threshold (${minScore}). Highest Score: ${bestMatch.score}`,
+        score: bestMatch.score,
+      }
+    : { bestProduct: bestMatch.product, score: bestMatch.score };
 }
 
 function calculateSimilarityScore(

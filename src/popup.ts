@@ -63,10 +63,15 @@ const handleButtonClick = async () => {
 
   for (const searchResult of searchResults) {
     if (searchResult === undefined) continue;
-    try {
-      console.log(getBestMatchingProduct(mcmasterItem, searchResult, 0.2));
-    } catch (error) {
-      console.error(error);
+    const { bestProduct, score, error } = getBestMatchingProduct(
+      mcmasterItem,
+      searchResult,
+      0.2,
+    );
+    if (error) console.error(error);
+    else {
+      console.log("bestProduct: ", bestProduct);
+      console.log("score: ", score);
     }
   }
 };
