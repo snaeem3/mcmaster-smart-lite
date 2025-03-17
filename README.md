@@ -11,7 +11,7 @@ This extension aims to solve this problem by quickly searching for your McMaster
 2. `cd` into the cloned repository and run `npm install` to install the dependencies
 3. Run `npm build:bundle` to create the extension bundle
 4. Navigate to [chrome://extensions/](chrome://extensions/) and turn on _Developer Mode_ in the top right corner
-5. Click the _Load unpacked_ button and navigate to `distribution/` folder
+5. Click the _Load unpacked_ button and navigate to the `/distribution` folder
 6. Click _Select Folder_
 7. Ensure that the extension is enabled in [chrome://extensions/](chrome://extensions/)
 
@@ -21,7 +21,8 @@ The extension should now be running when you visit a [McMaster-Carr](mcmaster.co
 This roadmap describes my current, future, and past goals for this project. 
 
 ### Current
-* Develop the initial algorithm to select/rank the best matching product(s)
+* Improve search queries created by `createSearchQueries.ts` to yield better search results
+* Improve selection/ranking of found alternatives in `bestMatchingProducts.ts`
 * Automate extension testing
 * Switch from vanilla JS to a front-end framework
 * Make features editable/selectable before searching
@@ -35,4 +36,5 @@ This roadmap describes my current, future, and past goals for this project.
 ### Past
 - [x] Successfully extract data from a McMaster product page
 - [x] Create a basic search query from the McMaster product
+- [x] Develop the initial algorithm to select/rank the best matching product(s)
 - [x] Successfully query MSC results and return the search results back to the extension
