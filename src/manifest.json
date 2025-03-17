@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "My Chrome Extension",
+    "name": "McMaster Smart",
     "version": "1.0",
-    "description": "A simple Chrome extension.",
+    "description": "Searches competitor websites for cheaper alternatives to your McMaster products",
     "permissions": [
         "scripting",
         "activeTab",
