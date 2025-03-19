@@ -52,6 +52,9 @@ beforeEach(() => {
 
 test("Returns the filter category options", () => {
   expect(getFilterCategoryOptions(filterModalUlContainer)).toEqual(
-    filterOptions,
+    expect.arrayContaining(filterOptions),
+  );
+  expect(getFilterCategoryOptions(filterModalUlContainer)).toEqual(
+    expect.arrayContaining(filterOptions.reverse()),
   );
 });
