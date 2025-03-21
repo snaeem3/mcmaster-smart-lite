@@ -1,4 +1,5 @@
 import { MSCItem } from "./msc/MSCItem";
+import { filterBar } from "./msc/filterBar";
 
 export default async function executeFuncOnURL(
   url: string,
@@ -33,6 +34,12 @@ async function executeFuncOnWindow(
     }
 
     console.log("hopeful msc tab: ", tab);
+
+    const filterInjectionResults = await chrome.scripting.executeScript({
+      func: filterBar,
+      target: { tabId: tab.id },
+    });
+    console.log("filterInjectionResults: ", filterInjectionResults);
 
     const injectionResults = await chrome.scripting.executeScript({
       func: func,

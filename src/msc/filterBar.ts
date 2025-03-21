@@ -1,12 +1,17 @@
-function getAccordianHeaders(
-  filterBar: HTMLDivElement | HTMLUListElement,
-  headerQuery = ".accordionHeader",
-) {
-  const accordionHeadersNodeList = filterBar.querySelectorAll(headerQuery);
-  const accordionHeaders = [...accordionHeadersNodeList];
-  return accordionHeaders.map((accordionHeader) =>
-    accordionHeader.textContent?.trim(),
-  );
+export function filterBar(filterBaryQuery = "#filter-bar") {
+  const filterBar = document.querySelector(filterBaryQuery) as HTMLDivElement;
+  return getAccordionHeaders(filterBar);
+
+  function getAccordionHeaders(
+    filterBar: HTMLDivElement | HTMLUListElement,
+    headerQuery = ".accordionHeader",
+  ) {
+    const accordionHeadersNodeList = filterBar.querySelectorAll(headerQuery);
+    const accordionHeaders = [...accordionHeadersNodeList];
+    return accordionHeaders.map((accordionHeader) =>
+      accordionHeader.textContent?.trim(),
+    );
+  }
 }
 
 // Return the options for a given filter category
