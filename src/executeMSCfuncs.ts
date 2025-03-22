@@ -1,6 +1,6 @@
 import { McMasterItem } from "./Item";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
-import { filterBar } from "./msc/filterBar";
+import { filterBar, applyCategoryFilter } from "./msc/filterBar";
 
 export default async function executeMSCfuncs(
   url: string,
@@ -45,18 +45,34 @@ async function executeFuncsOnWindow(
 
     const accordionHeaders = filterInjectionResults[0].result;
     let matches: string[] = [];
-    if (accordionHeaders && accordionHeaders.length > 0 && mcmasterItem) {
+    if (
+      accordionHeaders &&
+      accordionHeaders.length > 0 &&
+      mcmasterItem &&
+      mcmasterItem.itemFeatures
+    ) {
       matches = getFeatureMatches(
         accordionHeaders.filter(
           (header): header is string => header !== undefined,
         ),
         mcmasterItem,
       );
+      console.log(
+        `matches between mcmasterItem.itemFeatures and MSC accordionHeaders: `,
+        matches,
+      );
+
+      // for each match, go through the MSC page and view the available checkbox options
+      for (const match of matches) {
+        const matchInjectionResults = await chrome.scripting.executeScript({
+          func: applyCategoryFilter,
+          target: { tabId: tab.id },
+          args: [match, mcmasterItem.itemFeatures],
+        });
+        console.log("matchInjectionResults: ", matchInjectionResults);
+      }
+      // if a checkbox matches the item feature, click it
     }
-    console.log(
-      `matches between mcmasterItem.itemFeatures and MSC accordionHeaders: `,
-      matches,
-    );
 
     const injectionResults = await chrome.scripting.executeScript({
       func: extractMSCSearchResults,

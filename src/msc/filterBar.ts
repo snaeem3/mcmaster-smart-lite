@@ -44,3 +44,31 @@ function extractTextExcludingSpan(labelElement: HTMLLabelElement) {
   });
   return result.trim();
 }
+
+export function applyCategoryFilter(
+  categoryName: string,
+  mcmasterFeatures: Record<string, string | Record<string, string>>,
+  filterBaryQuery = "#filter-bar",
+  brandAccordionQuery = ".brandAccordion",
+) {
+  // TODO: Handle situations when "Show More" button is and isn't there
+  // Step 1: Find the Category Header
+  const brandAccordion = [
+    ...document.querySelectorAll(`${filterBaryQuery} ${brandAccordionQuery}`),
+  ].find((element) => element.textContent?.includes(categoryName));
+
+  if (!brandAccordion) return [];
+
+  // Step 2: Click the "Show More" button if available
+  const showMoreDiv = [...brandAccordion.querySelectorAll(`div[onclick]`)].find(
+    (span) => span.textContent?.includes("Show more"),
+  );
+  if (showMoreDiv) return [`${categoryName} has a Show more button`];
+  return [`${categoryName} does NOT have a Show more button`];
+
+  // Step 3: Extract the option values
+  // const options = getOptions();
+  // Step 4: Check if any option values match the the mcmasterItem.itemFatures[categoryName]
+  // Step 5: Click relevant options
+  // Step 6: Return the names of the options found and clicked
+}
