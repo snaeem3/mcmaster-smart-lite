@@ -1,8 +1,7 @@
 import { Item, McMasterItem } from "./Item";
 import getActiveTabURL from "./utils/getActiveTabURL";
 import createSearchQueries from "./createSearchQueries";
-import executeFuncOnURL from "./executeFuncOnURL";
-import extractMSCSearchResults from "./msc/extractMSCSearchResults";
+import executeMSCfuncs from "./executeFuncOnURL";
 import getBestMatchingProduct from "./bestMatchingProduct";
 import { MSCItem } from "./msc/MSCItem";
 
@@ -70,7 +69,7 @@ const handleButtonClick = async () => {
   // TODO: Add try-catch below?
   // Execute MSC scripts using created search queries
   const windowResults = await Promise.all(
-    urls.map((url) => executeFuncOnURL(url, extractMSCSearchResults)),
+    urls.map((url) => executeMSCfuncs(url, mcmasterItem)),
   );
   console.log(windowResults);
 

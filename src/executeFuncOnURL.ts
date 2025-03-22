@@ -1,10 +1,10 @@
-import { MSCItem } from "./msc/MSCItem";
+import { McMasterItem } from "./Item";
+import extractMSCSearchResults from "./msc/extractMSCSearchResults";
 import { filterBar } from "./msc/filterBar";
 
-export default async function executeFuncOnURL(
+export default async function executeMSCfuncs(
   url: string,
-  func: (s?: string) => Partial<MSCItem>[],
-  funcArgs?: string,
+  mcmasterItem?: Partial<McMasterItem>,
   type: chrome.windows.createTypeEnum = "popup",
 ) {
   const window = await chrome.windows.create({
@@ -12,14 +12,13 @@ export default async function executeFuncOnURL(
     type: type,
   });
 
-  const result = await executeFuncOnWindow(window, func);
+  const result = await executeFuncsOnWindow(window, mcmasterItem);
   return result;
 }
 
-async function executeFuncOnWindow(
+async function executeFuncsOnWindow(
   window: chrome.windows.Window,
-  func: (s?: string) => Partial<MSCItem>[],
-  funcArgs?: string,
+  mcmasterItem?: Partial<McMasterItem>,
 ) {
   try {
     if (!window.id) {
@@ -39,12 +38,29 @@ async function executeFuncOnWindow(
       func: filterBar,
       target: { tabId: tab.id },
     });
-    console.log("filterInjectionResults: ", filterInjectionResults);
+    console.log(
+      "filterInjectionResults[0].result: ",
+      filterInjectionResults[0].result,
+    );
+
+    const accordionHeaders = filterInjectionResults[0].result;
+    let matches: string[] = [];
+    if (accordionHeaders && accordionHeaders.length > 0 && mcmasterItem) {
+      matches = getFeatureMatches(
+        accordionHeaders.filter(
+          (header): header is string => header !== undefined,
+        ),
+        mcmasterItem,
+      );
+    }
+    console.log(
+      `matches between mcmasterItem.itemFeatures and MSC accordionHeaders: `,
+      matches,
+    );
 
     const injectionResults = await chrome.scripting.executeScript({
-      func: func,
+      func: extractMSCSearchResults,
       target: { tabId: tab.id },
-      // args: [funcArgs],
     });
 
     console.log("injectionResults: ", injectionResults);
@@ -59,4 +75,45 @@ async function executeFuncOnWindow(
   } catch (error) {
     console.error("Error in executeScriptOnWindow: ", error);
   }
+}
+
+function getFeatureMatches(
+  categoryHeaders: string[],
+  mcmasterItemFeatures: Pick<Partial<McMasterItem>, "itemFeatures">,
+  caseInsensitive: boolean = true,
+) {
+  const itemFeatures = mcmasterItemFeatures.itemFeatures;
+  const validKeys = new Set<string>();
+
+  for (const itemFeature in itemFeatures) {
+    const value = itemFeatures[itemFeature];
+    if (typeof value === "string") {
+      validKeys.add(caseInsensitive ? itemFeature.toLowerCase() : itemFeature);
+    } else if (typeof value === "object" && value !== null) {
+      // If the value is a nested record, add a composite key for each property.
+      for (const subFeature in value) {
+        const compositeKey = `${itemFeature} ${subFeature}`;
+        validKeys.add(
+          caseInsensitive ? compositeKey.toLowerCase() : compositeKey,
+        );
+      }
+    }
+  }
+
+  // DEBUG: Show the valid keys we will match against
+  // console.log("Valid keys:", Array.from(validKeys));
+
+  return categoryHeaders.filter((categoryHeader) => {
+    const checkKey = caseInsensitive
+      ? categoryHeader.toLowerCase()
+      : categoryHeader;
+    const isMatch = validKeys.has(checkKey);
+
+    // DEBUG: Show each item being checked and whether it matched
+    // console.log(
+    //   `Checking "${categoryHeader}" -> "${checkKey}" | Match: ${isMatch}`,
+    // );
+
+    return isMatch;
+  });
 }
