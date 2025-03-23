@@ -1,6 +1,6 @@
 import { McMasterItem } from "./Item";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
-import { filterBar, applyCategoryFilter } from "./msc/filterBar";
+import { getAccordionHeaders, applyCategoryFilter } from "./msc/filterBar";
 
 export default async function executeMSCfuncs(
   url: string,
@@ -34,16 +34,17 @@ async function executeFuncsOnWindow(
 
     console.log("hopeful msc tab: ", tab);
 
-    const filterInjectionResults = await chrome.scripting.executeScript({
-      func: filterBar,
-      target: { tabId: tab.id },
-    });
+    const accordionHeaderInjectionResults =
+      await chrome.scripting.executeScript({
+        func: getAccordionHeaders,
+        target: { tabId: tab.id },
+      });
     console.log(
-      "filterInjectionResults[0].result: ",
-      filterInjectionResults[0].result,
+      "accordionHeaderInjectionResults[0].result: ",
+      accordionHeaderInjectionResults[0].result,
     );
 
-    const accordionHeaders = filterInjectionResults[0].result;
+    const accordionHeaders = accordionHeaderInjectionResults[0].result;
     let matches: string[] = [];
     if (
       accordionHeaders &&

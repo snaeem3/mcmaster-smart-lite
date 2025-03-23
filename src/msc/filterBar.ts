@@ -1,17 +1,14 @@
-export function filterBar(filterBaryQuery = "#filter-bar") {
+export function getAccordionHeaders(
+  filterBaryQuery = "#filter-bar",
+  headerQuery = ".accordionHeader",
+) {
   const filterBar = document.querySelector(filterBaryQuery) as HTMLDivElement;
-  return getAccordionHeaders(filterBar);
 
-  function getAccordionHeaders(
-    filterBar: HTMLDivElement | HTMLUListElement,
-    headerQuery = ".accordionHeader",
-  ) {
-    const accordionHeadersNodeList = filterBar.querySelectorAll(headerQuery);
-    const accordionHeaders = [...accordionHeadersNodeList];
-    return accordionHeaders.map((accordionHeader) =>
-      accordionHeader.textContent?.trim(),
-    );
-  }
+  const accordionHeadersNodeList = filterBar.querySelectorAll(headerQuery);
+  const accordionHeaders = [...accordionHeadersNodeList];
+  return accordionHeaders.map((accordionHeader) =>
+    accordionHeader.textContent?.trim(),
+  );
 }
 
 export function applyCategoryFilter(
