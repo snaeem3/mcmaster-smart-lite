@@ -69,7 +69,7 @@ async function executeFuncsOnWindow(
           target: { tabId: tab.id },
           args: [match, mcmasterItem.itemFeatures],
         });
-        console.log("matchInjectionResults: ", matchInjectionResults);
+        console.log(`${match} matchInjectionResults: `, matchInjectionResults);
       }
       // if a checkbox matches the item feature, click it
     }
