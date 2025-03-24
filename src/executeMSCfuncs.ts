@@ -65,12 +65,20 @@ async function executeFuncsOnWindow(
 
       // for each match, go through the MSC page and view the available checkbox options
       for (const match of matches) {
+        console.log("match: ", match);
+        console.log(
+          `mcmasterItem.itemFeatures['${match}']: `,
+          mcmasterItem.itemFeatures[match],
+        );
         const matchInjectionResults = await chrome.scripting.executeScript({
           func: applyCategoryFilter,
           target: { tabId: tab.id },
-          args: [match, mcmasterItem.itemFeatures],
+          args: [match, mcmasterItem.itemFeatures[match]],
         });
-        console.log(`${match} matchInjectionResults: `, matchInjectionResults);
+        console.log(
+          `${match} matchInjectionResults[0]: `,
+          matchInjectionResults[0],
+        );
       }
       // if a checkbox matches the item feature, click it
     }

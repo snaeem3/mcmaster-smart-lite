@@ -13,9 +13,10 @@ export function getAccordionHeaders(
 
 export function applyCategoryFilter(
   categoryName: string,
-  mcmasterFeatures: Record<string, string | Record<string, string>>,
+  featureValue: string | Record<string, string>,
   filterBaryQuery = "#filter-bar",
   brandAccordionQuery = ".brandAccordion",
+  filterModalULQuery = "#filter-modal-ul-container",
 ) {
   // Step 1: Find the Category Header
   const brandAccordion = [
@@ -28,16 +29,21 @@ export function applyCategoryFilter(
   const showMoreDiv = [...brandAccordion.querySelectorAll(`div[onclick]`)].find(
     (span) => span.textContent?.includes("Show more"),
   );
-  // TODO: Handle situations when "Show More" button is and isn't there
-  // if (showMoreDiv) return [`${categoryName} has a Show more button`];
-  // return [`${categoryName} does NOT have a Show more button`];
+
+  let options: string[] = [];
+  let ul: HTMLUListElement;
+  if (showMoreDiv instanceof HTMLElement) {
+    showMoreDiv.click();
+    ul = document.querySelector(filterModalULQuery) as HTMLUListElement;
+  } else {
+    ul = brandAccordion.querySelector(`ul`) as HTMLUListElement;
+  }
 
   // Step 3: Extract the option values
-  const ul = brandAccordion.querySelector(`ul`);
   if (!ul) return ["ul not found"];
-  const options = getFilterCategoryOptions(ul);
+  options = getFilterCategoryOptions(ul);
   return options;
-  // Step 4: Check if any option values match the the mcmasterItem.itemFatures[categoryName]
+  // Step 4: Check if any option values match the featureValue
   // Step 5: Click relevant options
   // Step 6: Return the names of the options found and clicked
 
@@ -50,13 +56,13 @@ export function applyCategoryFilter(
     return liElements.map((liElement) => {
       const checkboxInput = liElement.querySelector("label input");
       if (checkboxInput && checkboxInput.hasAttribute("data-refinement-value"))
-        return checkboxInput.getAttribute("data-refinement-value");
+        return checkboxInput.getAttribute("data-refinement-value") as string;
 
       // Plan B if the checkbox input data was not found
       const label = liElement.querySelector("label:not(.msc-checkbox)");
       return label instanceof HTMLLabelElement // Assert that the label was found
         ? extractTextExcludingSpan(label)
-        : null;
+        : "";
     });
   }
 
