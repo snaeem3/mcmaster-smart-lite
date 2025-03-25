@@ -12,8 +12,8 @@ export function getAccordionHeaders(
 }
 
 export function applyCategoryFilter(
-  categoryName: string,
-  featureValue: string | Record<string, string>,
+  featureCategory: string,
+  featureValue: string,
   filterBaryQuery = "#filter-bar",
   brandAccordionQuery = ".brandAccordion",
   filterModalULQuery = "#filter-modal-ul-container",
@@ -21,7 +21,7 @@ export function applyCategoryFilter(
   // Step 1: Find the Category Header
   const brandAccordion = [
     ...document.querySelectorAll(`${filterBaryQuery} ${brandAccordionQuery}`),
-  ].find((element) => element.textContent?.includes(categoryName));
+  ].find((element) => element.textContent?.includes(featureCategory));
 
   if (!brandAccordion) return [];
 

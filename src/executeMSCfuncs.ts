@@ -43,23 +43,22 @@ async function executeFuncsOnWindow(
       "accordionHeaderInjectionResults[0].result: ",
       accordionHeaderInjectionResults[0].result,
     );
-
     const accordionHeaders = accordionHeaderInjectionResults[0].result;
+
+    const flatMcMasterFeatures = mcmasterItem?.itemFeatures
+      ? flattenRecord(mcmasterItem?.itemFeatures)
+      : {};
     let matches: string[] = [];
-    if (
-      accordionHeaders &&
-      accordionHeaders.length > 0 &&
-      mcmasterItem &&
-      mcmasterItem.itemFeatures
-    ) {
+
+    if (accordionHeaders && accordionHeaders.length > 0) {
       matches = getFeatureMatches(
         accordionHeaders.filter(
           (header): header is string => header !== undefined,
         ),
-        mcmasterItem,
+        flatMcMasterFeatures,
       );
       console.log(
-        `matches between mcmasterItem.itemFeatures and MSC accordionHeaders: `,
+        `matches between flatMcMasterFeatures and MSC accordionHeaders: `,
         matches,
       );
 
@@ -67,13 +66,13 @@ async function executeFuncsOnWindow(
       for (const match of matches) {
         console.log("match: ", match);
         console.log(
-          `mcmasterItem.itemFeatures['${match}']: `,
-          mcmasterItem.itemFeatures[match],
+          `flatMcMasterFeatures['${match}']: `,
+          flatMcMasterFeatures[match],
         );
         const matchInjectionResults = await chrome.scripting.executeScript({
           func: applyCategoryFilter,
           target: { tabId: tab.id },
-          args: [match, mcmasterItem.itemFeatures[match]],
+          args: [match, flatMcMasterFeatures[match]],
         });
         console.log(
           `${match} matchInjectionResults[0]: `,
@@ -102,33 +101,23 @@ async function executeFuncsOnWindow(
   }
 }
 
+//#region Helper Functions
 function getFeatureMatches(
   categoryHeaders: string[],
-  mcmasterItemFeatures: Pick<Partial<McMasterItem>, "itemFeatures">,
+  flatFeatures: Record<string, string>,
   caseInsensitive: boolean = true,
 ) {
-  const itemFeatures = mcmasterItemFeatures.itemFeatures;
   const validKeys = new Set<string>();
 
-  for (const itemFeature in itemFeatures) {
-    const value = itemFeatures[itemFeature];
-    if (typeof value === "string") {
-      validKeys.add(caseInsensitive ? itemFeature.toLowerCase() : itemFeature);
-    } else if (typeof value === "object" && value !== null) {
-      // If the value is a nested record, add a composite key for each property.
-      for (const subFeature in value) {
-        const compositeKey = `${itemFeature} ${subFeature}`;
-        validKeys.add(
-          caseInsensitive ? compositeKey.toLowerCase() : compositeKey,
-        );
-      }
-    }
+  for (const feature in flatFeatures) {
+    validKeys.add(caseInsensitive ? feature.toLowerCase() : feature);
   }
 
   // DEBUG: Show the valid keys we will match against
   // console.log("Valid keys:", Array.from(validKeys));
 
   return categoryHeaders.filter((categoryHeader) => {
+    // TODO: Currently looking for an exact match, should check for match above given threshold
     const checkKey = caseInsensitive
       ? categoryHeader.toLowerCase()
       : categoryHeader;
@@ -141,4 +130,24 @@ function getFeatureMatches(
 
     return isMatch;
   });
+}
+
+function flattenRecord(
+  input: Record<string, string | Record<string, string>>,
+): Record<string, string> {
+  const result: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(input)) {
+    if (typeof value === "string") {
+      result[key] = value;
+    } else {
+      // It's a nested record
+      for (const [subKey, subValue] of Object.entries(value)) {
+        const newKey = `${key} ${subKey}`;
+        result[newKey] = subValue;
+      }
+    }
+  }
+
+  return result;
 }
