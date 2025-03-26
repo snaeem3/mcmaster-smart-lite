@@ -11,9 +11,8 @@ export function getAccordionHeaders(
   );
 }
 
-export function applyCategoryFilter(
+export function getCategoryOptions(
   featureCategory: string,
-  featureValue: string,
   filterBaryQuery = "#filter-bar",
   brandAccordionQuery = ".brandAccordion",
   filterModalULQuery = "#filter-modal-ul-container",
@@ -43,9 +42,6 @@ export function applyCategoryFilter(
   if (!ul) return ["ul not found"];
   options = getFilterCategoryOptions(ul);
   return options;
-  // Step 4: Check if any option values match the featureValue
-  // Step 5: Click relevant options
-  // Step 6: Return the names of the options found and clicked
 
   //#region Helper Functions
   // Return the options for a given filter category
@@ -76,4 +72,11 @@ export function applyCategoryFilter(
     });
     return result.trim();
   }
+  //#endregion
+}
+
+export function applyFilters(optionsToSelect: string[]) {
+  // Step 1: Click relevant options
+  // Step 2: Click Apply Filters
+  // Step 3: Return the names of the options found and clicked
 }

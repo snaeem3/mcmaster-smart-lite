@@ -1,6 +1,11 @@
+import stringSimilarity from "string-similarity-js";
 import { McMasterItem } from "./Item";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
-import { getAccordionHeaders, applyCategoryFilter } from "./msc/filterBar";
+import {
+  getAccordionHeaders,
+  getCategoryOptions,
+  applyFilters,
+} from "./msc/filterBar";
 
 export default async function executeMSCfuncs(
   url: string,
@@ -70,16 +75,38 @@ async function executeFuncsOnWindow(
           flatMcMasterFeatures[match],
         );
         const matchInjectionResults = await chrome.scripting.executeScript({
-          func: applyCategoryFilter,
+          func: getCategoryOptions,
           target: { tabId: tab.id },
-          args: [match, flatMcMasterFeatures[match]],
+          args: [match],
         });
         console.log(
           `${match} matchInjectionResults[0]: `,
           matchInjectionResults[0],
         );
+        const categoryOptions = matchInjectionResults[0].result;
+        // Check if any option values match the featureValue
+        const THRESHOLD = 0.5;
+        let optionsToSelect: string[] = [];
+        if (categoryOptions) {
+          optionsToSelect = categoryOptions.filter(
+            (option) =>
+              stringSimilarity(option, flatMcMasterFeatures[match]) > THRESHOLD,
+          );
+        }
+        console.log("optionsToSelect: ", optionsToSelect);
+
+        // if a checkbox matches the item feature, click it
+        const applyFiltersInjectionResults =
+          await chrome.scripting.executeScript({
+            func: applyFilters,
+            target: { tabId: tab.id },
+            args: [optionsToSelect],
+          });
+        console.log(
+          `${match} applyFiltersInjectionResults[0]: `,
+          applyFiltersInjectionResults[0],
+        );
       }
-      // if a checkbox matches the item feature, click it
     }
 
     const injectionResults = await chrome.scripting.executeScript({
