@@ -87,6 +87,7 @@ async function executeFuncsOnWindow(
         // Check if any option values match the featureValue
         const THRESHOLD = 0.5;
         let optionsToSelect: string[] = [];
+        // TODO: Sort the options by match and only use the best option
         if (categoryOptions) {
           optionsToSelect = categoryOptions.filter(
             (option) =>
@@ -100,7 +101,7 @@ async function executeFuncsOnWindow(
           await chrome.scripting.executeScript({
             func: applyFilters,
             target: { tabId: tab.id },
-            args: [optionsToSelect],
+            args: [match, optionsToSelect],
           });
         console.log(
           `${match} applyFiltersInjectionResults[0]: `,

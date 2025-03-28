@@ -75,8 +75,43 @@ export function getCategoryOptions(
   //#endregion
 }
 
-export function applyFilters(optionsToSelect: string[]) {
+export function applyFilters(
+  categoryName: string,
+  optionsToSelect: string[],
+  filterBaryQuery = "#filter-bar",
+  brandAccordionQuery = ".brandAccordion",
+  filterModalULQuery = "#filter-modal-ul-container",
+) {
+  const filterModalUl = document.querySelector(
+    filterModalULQuery,
+  ) as HTMLUListElement;
+  const brandAccordion = [
+    ...document.querySelectorAll(`${filterBaryQuery} ${brandAccordionQuery}`),
+  ].find((element) => element.textContent?.includes(categoryName));
+  const filterBarUl = brandAccordion?.querySelector(`ul`) as HTMLUListElement;
+  // Choosing the correct <ul> based on which has more <li> elements
+  const ul =
+    filterModalUl.querySelectorAll("li").length >
+    filterBarUl.querySelectorAll("li").length
+      ? filterModalUl
+      : filterBarUl;
+
+  const succesfulClicks: string[] = [];
   // Step 1: Click relevant options
-  // Step 2: Click Apply Filters
-  // Step 3: Return the names of the options found and clicked
+  // NOTE: Clicking the left bar checkbox immediately applies
+
+  for (const optionToSelect of optionsToSelect) {
+    const li = [...ul.querySelectorAll(`li`)].find((element) =>
+      element.textContent?.includes(optionToSelect),
+    );
+    const labelToClick = li?.querySelector("label");
+    console.log(labelToClick?.getHTML());
+    if (labelToClick instanceof HTMLElement) {
+      labelToClick.click();
+      // TODO: Verify it the label is checked
+      succesfulClicks.push(labelToClick.getHTML());
+    }
+  }
+  // TODO: Click Apply Filters ONLY if it was the modal
+  return succesfulClicks;
 }
