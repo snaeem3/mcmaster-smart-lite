@@ -87,12 +87,20 @@ async function executeFuncsOnWindow(
         // Check if any option values match the featureValue
         const THRESHOLD = 0.5;
         let optionsToSelect: string[] = [];
-        // TODO: Sort the options by match and only use the best option
+
         if (categoryOptions) {
-          optionsToSelect = categoryOptions.filter(
-            (option) =>
-              stringSimilarity(option, flatMcMasterFeatures[match]) > THRESHOLD,
-          );
+          // Sort the options by similarity score
+          optionsToSelect = categoryOptions
+            .filter(
+              (option) =>
+                stringSimilarity(option, flatMcMasterFeatures[match]) >
+                THRESHOLD,
+            )
+            .sort(
+              (a, b) =>
+                stringSimilarity(b, flatMcMasterFeatures[match]) -
+                stringSimilarity(a, flatMcMasterFeatures[match]),
+            );
         }
         console.log("optionsToSelect: ", optionsToSelect);
 
@@ -101,7 +109,7 @@ async function executeFuncsOnWindow(
           await chrome.scripting.executeScript({
             func: applyFilters,
             target: { tabId: tab.id },
-            args: [match, optionsToSelect],
+            args: [match, [optionsToSelect[0]]], // Using only the top option
           });
         console.log(
           `${match} applyFiltersInjectionResults[0]: `,
