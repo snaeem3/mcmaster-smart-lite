@@ -8,6 +8,7 @@ const rollup = {
     background: "./src/background.ts",
     popup: "./src/popup.ts",
     content: "./src/scripts/content.ts",
+    mscScript: "./src/scripts/mscScript.ts",
     utils: "./src/utils/getActiveTabURL.ts", // change to ./src/utils/**/*.ts with rollup multi plugin
   },
   output: {

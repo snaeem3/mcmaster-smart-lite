@@ -1,5 +1,6 @@
 import stringSimilarity from "string-similarity-js";
 import { McMasterItem } from "./Item";
+import waitForTabToLoad from "./utils/waitForTabToLoad";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
 import {
   getAccordionHeaders,
@@ -38,6 +39,17 @@ async function executeFuncsOnWindow(
     }
 
     console.log("hopeful msc tab: ", tab);
+    console.log("tab.id: ", tab.id);
+    await waitForTabToLoad(tab.id);
+    try {
+      const mscTEST = await chrome.tabs.sendMessage(tab.id, {
+        type: "TEST",
+      });
+
+      console.log("mscTEST: ", mscTEST);
+    } catch (error) {
+      console.error('Error sending "TEST" message: ', error);
+    }
 
     const accordionHeaderInjectionResults =
       await chrome.scripting.executeScript({
@@ -131,6 +143,7 @@ async function executeFuncsOnWindow(
     if (window.id) {
       await chrome.windows.remove(window.id);
     }
+
     return injectionResults;
   } catch (error) {
     console.error("Error in executeScriptOnWindow: ", error);
