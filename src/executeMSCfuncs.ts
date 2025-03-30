@@ -2,11 +2,7 @@ import stringSimilarity from "string-similarity-js";
 import { McMasterItem } from "./Item";
 import waitForTabToLoad from "./utils/waitForTabToLoad";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
-import {
-  getAccordionHeaders,
-  getCategoryOptions,
-  applyFilters,
-} from "./msc/filterBar";
+import { getCategoryOptions, applyFilters } from "./msc/filterBar";
 
 export default async function executeMSCfuncs(
   url: string,
@@ -51,16 +47,16 @@ async function executeFuncsOnWindow(
       console.error('Error sending "TEST" message: ', error);
     }
 
-    const accordionHeaderInjectionResults =
-      await chrome.scripting.executeScript({
-        func: getAccordionHeaders,
-        target: { tabId: tab.id },
+    let accordionHeaders: string[] = [];
+    try {
+      accordionHeaders = await chrome.tabs.sendMessage(tab.id, {
+        type: "HEADERS",
+        otherData: "---testing other data----",
       });
-    console.log(
-      "accordionHeaderInjectionResults[0].result: ",
-      accordionHeaderInjectionResults[0].result,
-    );
-    const accordionHeaders = accordionHeaderInjectionResults[0].result;
+    } catch (error) {
+      console.error("Error sending HEADERS: ", error);
+    }
+    console.log("accordionHeaders: ", accordionHeaders);
 
     const flatMcMasterFeatures = mcmasterItem?.itemFeatures
       ? flattenRecord(mcmasterItem?.itemFeatures)
