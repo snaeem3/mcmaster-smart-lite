@@ -2,7 +2,7 @@ import stringSimilarity from "string-similarity-js";
 import { McMasterItem } from "./Item";
 import waitForTabToLoad from "./utils/waitForTabToLoad";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
-import { getCategoryOptions, applyFilters } from "./msc/filterBar";
+import { applyFilters } from "./msc/filterBar";
 
 export default async function executeMSCfuncs(
   url: string,
@@ -82,16 +82,16 @@ async function executeFuncsOnWindow(
           `flatMcMasterFeatures['${match}']: `,
           flatMcMasterFeatures[match],
         );
-        const matchInjectionResults = await chrome.scripting.executeScript({
-          func: getCategoryOptions,
-          target: { tabId: tab.id },
-          args: [match],
-        });
-        console.log(
-          `${match} matchInjectionResults[0]: `,
-          matchInjectionResults[0],
-        );
-        const categoryOptions = matchInjectionResults[0].result;
+        let categoryOptions: string[] = [];
+        try {
+          categoryOptions = await chrome.tabs.sendMessage(tab.id, {
+            type: "CATEGORY_OPTIONS",
+            featureCategoryName: match,
+          });
+        } catch (error) {
+          console.error("Error sending CATEGORY_OPTIONS: ", error);
+        }
+        console.log(`${match} categoryOptions: `, categoryOptions);
         // Check if any option values match the featureValue
         const THRESHOLD = 0.5;
         let optionsToSelect: string[] = [];

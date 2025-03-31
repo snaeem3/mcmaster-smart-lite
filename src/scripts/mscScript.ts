@@ -1,4 +1,4 @@
-import { getAccordionHeaders } from "../msc/filterBar";
+import { getAccordionHeaders, getCategoryOptions } from "../msc/filterBar";
 
 // chrome.runtime.sendMessage({ action: "openPopup" });
 console.log("Content script running on a whitelisted site.");
@@ -11,10 +11,14 @@ console.log("Content script running on a whitelisted site.");
     const accordionHeaders = getAccordionHeaders();
     return accordionHeaders;
   };
+  const categoryOptions = (featureCategoryName: string) => {
+    const categoryOptions = getCategoryOptions(featureCategoryName);
+    return categoryOptions;
+  };
 
   chrome.runtime.onMessage.addListener((msg, sender, response) => {
     console.log("msg: ", msg);
-    const { type, otherData } = msg;
+    const { type, otherData, featureCategoryName } = msg;
     let result;
     switch (type) {
       case "TEST":
@@ -23,6 +27,9 @@ console.log("Content script running on a whitelisted site.");
       case "HEADERS":
         result = headers();
         console.log("otherData: ", otherData);
+        break;
+      case "CATEGORY_OPTIONS":
+        result = categoryOptions(featureCategoryName);
         break;
       default:
         console.warn("undefined type received: ", type);
