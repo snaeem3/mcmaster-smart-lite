@@ -1,4 +1,4 @@
-import { getAccordionHeaders, getCategoryOptions } from "../msc/filterBar";
+import { applyFilters, getAccordionHeaders, getCategoryOptions } from "../msc/filterBar";
 
 // chrome.runtime.sendMessage({ action: "openPopup" });
 console.log("Content script running on a whitelisted site.");
@@ -18,7 +18,7 @@ console.log("Content script running on a whitelisted site.");
 
   chrome.runtime.onMessage.addListener((msg, sender, response) => {
     console.log("msg: ", msg);
-    const { type, otherData, featureCategoryName } = msg;
+    const { type, otherData, featureCategoryName, optionsToSelect } = msg;
     let result;
     switch (type) {
       case "TEST":
@@ -30,6 +30,9 @@ console.log("Content script running on a whitelisted site.");
         break;
       case "CATEGORY_OPTIONS":
         result = categoryOptions(featureCategoryName);
+        break;
+      case "APPLY_FILTERS":
+        result = applyFilters(featureCategoryName, optionsToSelect);
         break;
       default:
         console.warn("undefined type received: ", type);

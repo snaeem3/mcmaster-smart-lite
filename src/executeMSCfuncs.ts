@@ -2,7 +2,6 @@ import stringSimilarity from "string-similarity-js";
 import { McMasterItem } from "./Item";
 import waitForTabToLoad from "./utils/waitForTabToLoad";
 import extractMSCSearchResults from "./msc/extractMSCSearchResults";
-import { applyFilters } from "./msc/filterBar";
 
 export default async function executeMSCfuncs(
   url: string,
@@ -113,16 +112,17 @@ async function executeFuncsOnWindow(
         console.log("optionsToSelect: ", optionsToSelect);
 
         // if a checkbox matches the item feature, click it
-        const applyFiltersInjectionResults =
-          await chrome.scripting.executeScript({
-            func: applyFilters,
-            target: { tabId: tab.id },
-            args: [match, [optionsToSelect[0]]], // Using only the top option
+        let appliedFilters: string[] = [];
+        try {
+          appliedFilters = await chrome.tabs.sendMessage(tab.id, {
+            type: "APPLY_FILTERS",
+            featureCategoryName: match,
+            optionsToSelect,
           });
-        console.log(
-          `${match} applyFiltersInjectionResults[0]: `,
-          applyFiltersInjectionResults[0],
-        );
+        } catch (error) {
+          console.error("Error sending APPLY_FILTERS: ", error);
+        }
+        console.log(`${match} appliedFilters: `, appliedFilters);
       }
     }
 
