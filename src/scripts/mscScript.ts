@@ -1,4 +1,9 @@
-import { applyFilters, getAccordionHeaders, getCategoryOptions } from "../msc/filterBar";
+import {
+  applyFilters,
+  getAccordionHeaders,
+  getCategoryOptions,
+} from "../msc/filterBar";
+import extractMSCSearchResults from "../msc/extractMSCSearchResults";
 
 // chrome.runtime.sendMessage({ action: "openPopup" });
 console.log("Content script running on a whitelisted site.");
@@ -33,6 +38,9 @@ console.log("Content script running on a whitelisted site.");
         break;
       case "APPLY_FILTERS":
         result = applyFilters(featureCategoryName, optionsToSelect);
+        break;
+      case "EXTRACT":
+        result = extractMSCSearchResults();
         break;
       default:
         console.warn("undefined type received: ", type);

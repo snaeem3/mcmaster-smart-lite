@@ -1,7 +1,7 @@
 import stringSimilarity from "string-similarity-js";
 import { McMasterItem } from "./Item";
 import waitForTabToLoad from "./utils/waitForTabToLoad";
-import extractMSCSearchResults from "./msc/extractMSCSearchResults";
+import { MSCItem } from "./msc/MSCItem";
 
 export default async function executeMSCfuncs(
   url: string,
@@ -126,21 +126,21 @@ async function executeFuncsOnWindow(
       }
     }
 
-    const injectionResults = await chrome.scripting.executeScript({
-      func: extractMSCSearchResults,
-      target: { tabId: tab.id },
-    });
-
-    console.log("injectionResults: ", injectionResults);
-    for (const { frameId, result } of injectionResults) {
-      console.log(`Frame ${frameId} result:`, result);
+    let mscItems: Partial<MSCItem>[] = [];
+    try {
+      mscItems = await chrome.tabs.sendMessage(tab.id, {
+        type: "EXTRACT",
+      });
+    } catch (error) {
+      console.error("Error sending EXTRACT: ", error);
     }
+    console.log("mscItems: ", mscItems);
 
     if (window.id) {
       await chrome.windows.remove(window.id);
     }
 
-    return injectionResults;
+    return mscItems;
   } catch (error) {
     console.error("Error in executeScriptOnWindow: ", error);
   }

@@ -71,19 +71,13 @@ const handleButtonClick = async () => {
   const windowResults = await Promise.all(
     urls.map((url) => executeMSCfuncs(url, mcmasterItem)),
   );
-  console.log(windowResults);
+  console.log("windowResults: ", windowResults);
 
-  const searchResults = windowResults
-    .filter((windowResult) => windowResult !== undefined)
-    .map((windowResult) => windowResult[0].result);
-
-  console.log("searchResults: ", searchResults);
-
-  for (const searchResult of searchResults) {
-    if (searchResult === undefined) continue;
+  for (const windowResult of windowResults) {
+    if (windowResult === undefined) continue;
     const { bestProduct, score, error } = getBestMatchingProduct(
       mcmasterItem,
-      searchResult,
+      windowResult,
       0.2,
     );
     if (error) console.error(error);
