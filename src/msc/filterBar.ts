@@ -90,11 +90,15 @@ export function applyFilters(
   ].find((element) => element.textContent?.includes(categoryName));
   const filterBarUl = brandAccordion?.querySelector(`ul`) as HTMLUListElement;
   // Choosing the correct <ul> based on which has more <li> elements
-  const ul =
+  let ul = filterBarUl;
+  let shouldApplyFilter = false;
+  if (
     filterModalUl.querySelectorAll("li").length >
     filterBarUl.querySelectorAll("li").length
-      ? filterModalUl
-      : filterBarUl;
+  ) {
+    ul = filterModalUl;
+    shouldApplyFilter = true;
+  }
 
   const succesfulClicks: string[] = [];
   // Step 1: Click relevant options
@@ -112,6 +116,15 @@ export function applyFilters(
       succesfulClicks.push(labelToClick.getHTML());
     }
   }
-  // TODO: Click Apply Filters ONLY if it was the modal
+
+  const applyFilterBtn = document.querySelector(
+    `#filter-modal button[onclick]`,
+  );
+  if (
+    shouldApplyFilter &&
+    applyFilterBtn instanceof HTMLButtonElement &&
+    applyFilterBtn.getAttribute("onclick") === "modalApplyFilterClickHandler()"
+  )
+    applyFilterBtn.click();
   return succesfulClicks;
 }
