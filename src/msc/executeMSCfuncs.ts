@@ -134,6 +134,7 @@ async function executeFuncsOnWindow(
             featureCategoryName: match,
             optionsToSelect: [optionsToSelect[0]],
           });
+          if (appliedFilters.length > 0) await waitForTabToLoad(tab.id);
         } catch (error) {
           console.error("Error sending APPLY_FILTERS: ", error);
         }
@@ -141,7 +142,6 @@ async function executeFuncsOnWindow(
       }
     }
 
-    await waitForTabToLoad(tab.id);
     let mscItems: Partial<MSCItem>[] = [];
     try {
       mscItems = await chrome.tabs.sendMessage(tab.id, {

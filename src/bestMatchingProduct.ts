@@ -7,6 +7,8 @@ export default function getBestMatchingProduct(
   mscProds: Partial<MSCItem>[],
   minScore = 0.5,
 ) {
+  if (mscProds.length <= 0)
+    return { error: `${mscProds.length} products provided` };
   const scores = mscProds.map((mscProd) => ({
     product: mscProd,
     score: calculateSimilarityScore(mcmasterProd, mscProd),
