@@ -1,7 +1,7 @@
 import stringSimilarity from "string-similarity-js";
-import { McMasterItem } from "./Item";
-import waitForTabToLoad from "./utils/waitForTabToLoad";
-import { MSCItem } from "./msc/MSCItem";
+import { McMasterItem } from "../Item";
+import waitForTabToLoad from "../utils/waitForTabToLoad";
+import { MSCItem } from "./MSCItem";
 
 export default async function executeMSCfuncs(
   url: string,
@@ -44,6 +44,21 @@ async function executeFuncsOnWindow(
       console.log("mscTEST: ", mscTEST);
     } catch (error) {
       console.error('Error sending "TEST" message: ', error);
+    }
+
+    // Handle 0 results found page
+    let hasResults = true;
+    try {
+      hasResults = await chrome.tabs.sendMessage(tab.id, {
+        type: "HAS_RESULTS",
+      });
+    } catch (error) {
+      console.error('Error sending "HAS_RESULTS" message: ', error);
+    }
+    if (!hasResults) {
+      console.log("0 results found");
+      await chrome.windows.remove(window.id);
+      return [];
     }
 
     let accordionHeaders: string[] = [];
@@ -117,7 +132,7 @@ async function executeFuncsOnWindow(
           appliedFilters = await chrome.tabs.sendMessage(tab.id, {
             type: "APPLY_FILTERS",
             featureCategoryName: match,
-            optionsToSelect,
+            optionsToSelect: [optionsToSelect[0]],
           });
         } catch (error) {
           console.error("Error sending APPLY_FILTERS: ", error);
@@ -126,6 +141,7 @@ async function executeFuncsOnWindow(
       }
     }
 
+    await waitForTabToLoad(tab.id);
     let mscItems: Partial<MSCItem>[] = [];
     try {
       mscItems = await chrome.tabs.sendMessage(tab.id, {
@@ -134,11 +150,9 @@ async function executeFuncsOnWindow(
     } catch (error) {
       console.error("Error sending EXTRACT: ", error);
     }
-    console.log("mscItems: ", mscItems);
+    console.log(`${mscItems.length} mscItems final: `, mscItems);
 
-    if (window.id) {
-      await chrome.windows.remove(window.id);
-    }
+    await chrome.windows.remove(window.id);
 
     return mscItems;
   } catch (error) {

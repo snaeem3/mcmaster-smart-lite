@@ -12,10 +12,22 @@ console.log("Content script running on a whitelisted site.");
     const title = document.querySelector("h1")?.textContent?.trim(); // Should say "Showing Results For..."
     return title;
   };
+
+  const hasResults = (
+    querySelector = "main div",
+    noResultsText = "Sorry, we couldn't find",
+  ) => {
+    const mainDivs = [...document.querySelectorAll(querySelector)];
+    if (mainDivs.some((div) => div.textContent?.includes(noResultsText)))
+      return false;
+    return true;
+  };
+
   const headers = () => {
     const accordionHeaders = getAccordionHeaders();
     return accordionHeaders;
   };
+
   const categoryOptions = (featureCategoryName: string) => {
     const categoryOptions = getCategoryOptions(featureCategoryName);
     return categoryOptions;
@@ -28,6 +40,9 @@ console.log("Content script running on a whitelisted site.");
     switch (type) {
       case "TEST":
         result = mscTest();
+        break;
+      case "HAS_RESULTS":
+        result = hasResults();
         break;
       case "HEADERS":
         result = headers();

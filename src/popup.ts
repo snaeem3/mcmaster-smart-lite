@@ -1,7 +1,7 @@
 import { Item, McMasterItem } from "./Item";
 import getActiveTabURL from "./utils/getActiveTabURL";
 import createSearchQueries from "./createSearchQueries";
-import executeMSCfuncs from "./executeMSCfuncs";
+import executeMSCfuncs from "./msc/executeMSCfuncs";
 import getBestMatchingProduct from "./bestMatchingProduct";
 import { MSCItem } from "./msc/MSCItem";
 
