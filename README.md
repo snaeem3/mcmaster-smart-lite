@@ -26,7 +26,7 @@ This roadmap describes my current, future, and past goals for this project.
 * Automate extension testing
 * Switch from vanilla JS to a front-end framework
 * Make features editable/selectable before searching
-* Investigate applying the left-hand side MSC filters to narrow search results
+* Improve MSC side bar filtering to better recognize equivalent terms such as "Length" "Length (Inch)" and "Length (Decimal Inch)"
 
 ### Future
 * Search other sites besides MSC
@@ -38,3 +38,4 @@ This roadmap describes my current, future, and past goals for this project.
 - [x] Create a basic search query from the McMaster product
 - [x] Develop the initial algorithm to select/rank the best matching product(s)
 - [x] Successfully query MSC results and return the search results back to the extension
+- [x] Successfully apply left-hand side MSC filters to narrow search results
