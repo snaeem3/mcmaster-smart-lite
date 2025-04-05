@@ -7,7 +7,7 @@ console.log("Content script running on a whitelisted site.");
   const scanPage = () => {
     const title = document.querySelector("h1")?.textContent;
     const h3 = document.querySelector("h3")?.textContent;
-    const table = document.querySelector("table");
+    const tables = [...document.querySelectorAll("table")];
     // TODO: extract price
 
     const pageObj: Partial<McMasterItem> = {
@@ -16,7 +16,17 @@ console.log("Content script running on a whitelisted site.");
     };
     if (title) pageObj.primaryName = title;
     if (h3) pageObj.secondaryName = h3;
-    if (table) pageObj.itemFeatures = extractTable(table);
+
+    if (tables.length === 1) pageObj.itemFeatures = extractTable(tables[0]);
+    else {
+      const productDetailTable = tables.find((table) =>
+        table.className.includes("ProductDetail"),
+      );
+      if (!productDetailTable) {
+        console.warn("ProductDetail table not found- using last table on page");
+        pageObj.itemFeatures = extractTable(tables[tables.length - 1]);
+      } else pageObj.itemFeatures = extractTable(productDetailTable);
+    }
 
     return pageObj;
   };
