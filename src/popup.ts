@@ -35,6 +35,45 @@ const setBestMatchedProduct = (mscItem: Partial<MSCItem>, score: number) => {
     bestMatchProductP.textContent = `Match: ${Math.round((score + Number.EPSILON) * 100) / 100}`;
 };
 
+function createMSCli(itemName: string, href: string | URL, score: number) {
+  const li = document.createElement("li");
+  const h4 = document.createElement("h4");
+  const a = document.createElement("a");
+  const p = document.createElement("p");
+
+  h4.textContent = itemName;
+  a.href = href.toString();
+  a.target = "_blank";
+  p.textContent = `Match: ${Math.round((score + Number.EPSILON) * 100) / 100}`;
+
+  a.appendChild(h4);
+  li.append(a, p);
+  return li;
+}
+
+const setFoundProducts = (
+  mscItems: Partial<MSCItem>[],
+  scores: number[],
+  numToShow?: number,
+) => {
+  let numItems = mscItems.length;
+  if (numToShow && numToShow < numItems) numItems = numToShow;
+  for (let i = 0; i < numItems; i++) {
+    const itemLi = createMSCli(
+      mscItems[i].primaryName as string,
+      mscItems[i].url as string | URL,
+      scores[i],
+    );
+    matchList?.appendChild(itemLi);
+  }
+};
+
+const clearFoundProducts = () => {
+  while (matchList?.firstChild) {
+    matchList.removeChild(matchList.firstChild);
+  }
+};
+
 const handleButtonClick = async () => {
   const activeTab = await chrome.tabs.query({
     active: true,
@@ -75,16 +114,18 @@ const handleButtonClick = async () => {
 
   for (const windowResult of windowResults) {
     if (windowResult === undefined) continue;
+    const THRESHOLD = 0.1;
     const { bestProduct, score, error } = getBestMatchingProduct(
       mcmasterItem,
       windowResult,
-      0.2,
+      THRESHOLD,
     );
     if (error) console.error(error);
     else if (bestProduct) {
       console.log("bestProduct: ", bestProduct);
       console.log("score: ", score);
-      setBestMatchedProduct(bestProduct, score);
+      // setBestMatchedProduct(bestProduct, score);
+      setFoundProducts([bestProduct], [score]);
     }
   }
 };

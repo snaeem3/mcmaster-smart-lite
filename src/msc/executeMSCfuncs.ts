@@ -1,26 +1,27 @@
 import stringSimilarity from "string-similarity-js";
 import { McMasterItem } from "../Item";
-import waitForTabToLoad from "../utils/waitForTabToLoad";
 import { MSCItem } from "./MSCItem";
+import waitForTabToLoad from "../utils/waitForTabToLoad";
+import removeFinalParenthesis from "../utils/removeFinalParenthesis";
+
+interface FeatureMatch {
+  mcMasterName: string;
+  mcMasterValue: string;
+  MSCName: string;
+  similarity: number;
+}
 
 export default async function executeMSCfuncs(
   url: string,
   mcmasterItem?: Partial<McMasterItem>,
   type: chrome.windows.createTypeEnum = "popup",
+  DEBUG: boolean = false,
 ) {
   const window = await chrome.windows.create({
     url: url,
     type: type,
   });
 
-  const result = await executeFuncsOnWindow(window, mcmasterItem);
-  return result;
-}
-
-async function executeFuncsOnWindow(
-  window: chrome.windows.Window,
-  mcmasterItem?: Partial<McMasterItem>,
-) {
   try {
     if (!window.id) {
       throw new Error("Window ID is undefined.");
@@ -61,6 +62,7 @@ async function executeFuncsOnWindow(
       return [];
     }
 
+    //#region Side Bar Filtering
     let accordionHeaders: string[] = [];
     try {
       accordionHeaders = await chrome.tabs.sendMessage(tab.id, {
@@ -75,7 +77,7 @@ async function executeFuncsOnWindow(
     const flatMcMasterFeatures = mcmasterItem?.itemFeatures
       ? flattenRecord(mcmasterItem?.itemFeatures)
       : {};
-    let matches: string[] = [];
+    let matches: FeatureMatch[] = [];
 
     if (accordionHeaders && accordionHeaders.length > 0) {
       matches = getFeatureMatches(
@@ -93,35 +95,41 @@ async function executeFuncsOnWindow(
       for (const match of matches) {
         console.log("match: ", match);
         console.log(
-          `flatMcMasterFeatures['${match}']: `,
-          flatMcMasterFeatures[match],
+          `flatMcMasterFeatures['${match.mcMasterName}']: `,
+          flatMcMasterFeatures[match.mcMasterName],
         );
         let categoryOptions: string[] = [];
         try {
           categoryOptions = await chrome.tabs.sendMessage(tab.id, {
             type: "CATEGORY_OPTIONS",
-            featureCategoryName: match,
+            featureCategoryName: match.MSCName,
           });
         } catch (error) {
           console.error("Error sending CATEGORY_OPTIONS: ", error);
         }
-        console.log(`${match} categoryOptions: `, categoryOptions);
+        console.log(`${match.MSCName} categoryOptions: `, categoryOptions);
         // Check if any option values match the featureValue
         const THRESHOLD = 0.5;
         let optionsToSelect: string[] = [];
 
         if (categoryOptions) {
-          // Sort the options by similarity score
           optionsToSelect = categoryOptions
-            .filter(
-              (option) =>
-                stringSimilarity(option, flatMcMasterFeatures[match]) >
-                THRESHOLD,
-            )
+            .filter((option) => {
+              const optionSimilarity = stringSimilarity(
+                option,
+                match.mcMasterValue,
+              );
+              if (DEBUG)
+                console.log(
+                  `${option} vs. ${match.mcMasterValue} | ${optionSimilarity}`,
+                );
+              return optionSimilarity > THRESHOLD;
+            })
+            // Sort the options by similarity score
             .sort(
               (a, b) =>
-                stringSimilarity(b, flatMcMasterFeatures[match]) -
-                stringSimilarity(a, flatMcMasterFeatures[match]),
+                stringSimilarity(b, match.mcMasterValue) -
+                stringSimilarity(a, match.mcMasterValue),
             );
         }
         console.log("optionsToSelect: ", optionsToSelect);
@@ -131,17 +139,19 @@ async function executeFuncsOnWindow(
         try {
           appliedFilters = await chrome.tabs.sendMessage(tab.id, {
             type: "APPLY_FILTERS",
-            featureCategoryName: match,
+            featureCategoryName: match.MSCName,
             optionsToSelect: [optionsToSelect[0]],
           });
           if (appliedFilters.length > 0) await waitForTabToLoad(tab.id);
         } catch (error) {
           console.error("Error sending APPLY_FILTERS: ", error);
         }
-        console.log(`${match} appliedFilters: `, appliedFilters);
+        console.log(`${match.MSCName} appliedFilters: `, appliedFilters);
       }
     }
+    //#endregion
 
+    //#region Search Result Extraction
     let mscItems: Partial<MSCItem>[] = [];
     try {
       mscItems = await chrome.tabs.sendMessage(tab.id, {
@@ -159,36 +169,63 @@ async function executeFuncsOnWindow(
     console.error("Error in executeScriptOnWindow: ", error);
   }
 }
+//#endregion
 
 //#region Helper Functions
 function getFeatureMatches(
   categoryHeaders: string[],
   flatFeatures: Record<string, string>,
   caseInsensitive: boolean = true,
+  THRESHOLD = 0.9,
 ) {
-  const validKeys = new Set<string>();
+  const matchingFeatures: FeatureMatch[] = [];
+  for (const categoryHeader of categoryHeaders) {
+    // Check if any McMaster features match the current MSC feature name
+    const likelyFeatures: FeatureMatch[] = [];
+    for (const [key, value] of Object.entries(flatFeatures)) {
+      const adjustedKey = caseInsensitive ? key.toLowerCase() : key;
+      let adjustedCategoryHeader = removeFinalParenthesis(
+        categoryHeader,
+        // "Inch",
+      );
+      adjustedCategoryHeader = caseInsensitive
+        ? adjustedCategoryHeader.toLowerCase()
+        : adjustedCategoryHeader;
 
-  for (const feature in flatFeatures) {
-    validKeys.add(caseInsensitive ? feature.toLowerCase() : feature);
+      const score = stringSimilarity(adjustedKey, adjustedCategoryHeader);
+      if (score > 0)
+        console.log(
+          `${categoryHeader} --> ${adjustedCategoryHeader} vs. ${key} --> ${adjustedKey} | score: ${score}`,
+        );
+      if (score > THRESHOLD)
+        likelyFeatures.push({
+          mcMasterName: key,
+          mcMasterValue: value,
+          MSCName: categoryHeader,
+          similarity: score,
+        });
+    }
+
+    // Push the most likely feature into the final array
+    if (likelyFeatures.length > 0)
+      matchingFeatures.push(
+        likelyFeatures.sort((a, b) => b.similarity - a.similarity)[0],
+      );
   }
+  return matchingFeatures;
+}
 
-  // DEBUG: Show the valid keys we will match against
-  // console.log("Valid keys:", Array.from(validKeys));
-
-  return categoryHeaders.filter((categoryHeader) => {
-    // TODO: Currently looking for an exact match, should check for match above given threshold
-    const checkKey = caseInsensitive
-      ? categoryHeader.toLowerCase()
-      : categoryHeader;
-    const isMatch = validKeys.has(checkKey);
-
-    // DEBUG: Show each item being checked and whether it matched
-    // console.log(
-    //   `Checking "${categoryHeader}" -> "${checkKey}" | Match: ${isMatch}`,
-    // );
-
-    return isMatch;
-  });
+/**
+ * Appends " (Inch)" to the feature name if the feature value ends with a double quote (").
+ *
+ * @param {string} featureName - The name of the feature to potentially adjust.
+ * @param {string} featureValue - The value of the feature used to determine if adjustment is needed.
+ * @returns {string} The adjusted feature name with " (Inch)" appended if the value ends in a double quote, otherwise the original feature name.
+ */
+function appendInch(featureName: string, featureValue: string) {
+  return featureValue[featureValue.length - 1] === '"'
+    ? `${featureName} (Inch)`
+    : featureName;
 }
 
 function flattenRecord(
