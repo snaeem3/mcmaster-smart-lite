@@ -36,6 +36,20 @@ function isThreadSizeFormat(option: string): boolean {
   // $ — End of the string.
 }
 
+// To handle small screw sizes with no "
+const DIAMETER_SIZE_NO_APOSTROPHE = [
+  "#0",
+  "#1",
+  "#2",
+  "#3",
+  "#4",
+  "#5",
+  "#6",
+  "#8",
+  "#10",
+  "#12",
+];
+
 /**
  * Processes options for Thread Size (Inch) category, appending a double-quote
  * to the diameter part and preserving the hyphen before the thread count.
@@ -50,8 +64,10 @@ function processThreadSize(option: string): string {
   const threadCount = option.substring(lastHyphen + 1);
   // Convert mixed number hyphen to space, e.g., "1-1/4" -> "1 1/4"
   diameterPart = diameterPart.replace("-", " ");
+  const shouldContainApostrophe =
+    !DIAMETER_SIZE_NO_APOSTROPHE.includes(diameterPart);
 
-  return `${diameterPart}"-${threadCount}`;
+  return `${diameterPart}${shouldContainApostrophe ? '"' : ""}-${threadCount}`;
 }
 
 /**

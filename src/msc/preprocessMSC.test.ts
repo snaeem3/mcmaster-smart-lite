@@ -25,6 +25,14 @@ test("Thread Size with no unit given (Inch)", () => {
   expect(preprocessCategoryOption("1/4-12")).toBe('1/4"-12');
 });
 
+test("6-32 Thread size", () => {
+  expect(preprocessCategoryOption("#6-32", "Thread Size (Inch)")).toBe("#6-32");
+});
+
+test("1-8 Thread size", () => {
+  expect(preprocessCategoryOption("1-8", "Thread Size (Inch)")).toBe('1"-8');
+});
+
 test("Thread Size with no unit given (mm)", () => {
   expect(preprocessCategoryOption("M8")).toBe("M8");
 });
