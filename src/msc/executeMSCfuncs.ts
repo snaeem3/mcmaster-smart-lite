@@ -3,6 +3,7 @@ import { McMasterItem } from "../Item";
 import { MSCItem } from "./MSCItem";
 import waitForTabToLoad from "../utils/waitForTabToLoad";
 import removeFinalParenthesis from "../utils/removeFinalParenthesis";
+import { preprocessCategoryOption } from "./preprocessMSC";
 
 interface FeatureMatch {
   mcMasterName: string;
@@ -109,19 +110,23 @@ export default async function executeMSCfuncs(
         }
         console.log(`${match.MSCName} categoryOptions: `, categoryOptions);
         // Check if any option values match the featureValue
-        const THRESHOLD = 0.5;
+        const THRESHOLD = 0.6;
         let optionsToSelect: string[] = [];
 
         if (categoryOptions) {
           optionsToSelect = categoryOptions
             .filter((option) => {
-              const optionSimilarity = stringSimilarity(
+              const normalizedOption = preprocessCategoryOption(
                 option,
+                match.MSCName,
+              );
+              const optionSimilarity = stringSimilarity(
+                normalizedOption,
                 match.mcMasterValue,
               );
               if (DEBUG)
                 console.log(
-                  `${option} vs. ${match.mcMasterValue} | ${optionSimilarity}`,
+                  `${option} -> ${normalizedOption} vs. ${match.mcMasterValue} | ${optionSimilarity}`,
                 );
               return optionSimilarity > THRESHOLD;
             })
@@ -177,6 +182,7 @@ function getFeatureMatches(
   flatFeatures: Record<string, string>,
   caseInsensitive: boolean = true,
   THRESHOLD = 0.9,
+  DEBUG = false,
 ) {
   const matchingFeatures: FeatureMatch[] = [];
   for (const categoryHeader of categoryHeaders) {
@@ -193,7 +199,7 @@ function getFeatureMatches(
         : adjustedCategoryHeader;
 
       const score = stringSimilarity(adjustedKey, adjustedCategoryHeader);
-      if (score > 0)
+      if (DEBUG && score > 0)
         console.log(
           `${categoryHeader} --> ${adjustedCategoryHeader} vs. ${key} --> ${adjustedKey} | score: ${score}`,
         );

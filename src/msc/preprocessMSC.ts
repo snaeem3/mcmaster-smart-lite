@@ -103,3 +103,5 @@ function processMixedFraction(option: string): string {
   const whole = option.split("-")[0];
   return `${whole} ${fraction}`;
 }
+
+// TODO: McMaster Hardness value: Durometer 70A (Medidum) vs. MSC Hardness options ["70","75","80","90"]
