@@ -39,3 +39,4 @@ This roadmap describes my current, future, and past goals for this project.
 - [x] Develop the initial algorithm to select/rank the best matching product(s)
 - [x] Successfully query MSC results and return the search results back to the extension
 - [x] Successfully apply left-hand side MSC filters to narrow search results
+- [x] Create preprocessing steps for converting MSC string data to match McMaster's format
