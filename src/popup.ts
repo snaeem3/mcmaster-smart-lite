@@ -5,7 +5,7 @@ import executeMSCfuncs from "./msc/executeMSCfuncs";
 import getBestMatchingProduct from "./bestMatchingProduct";
 import { MSCItem } from "./msc/MSCItem";
 
-const clickMeButton = document.getElementById("clickMe");
+const searchButton = document.getElementById("search-btn");
 const itemTitle = document.getElementById("item-title");
 // const itemInfo = document.getElementById("item-info");
 const matchList = document.getElementById("match-list");
@@ -130,8 +130,8 @@ const handleButtonClick = async () => {
   }
 };
 
-if (clickMeButton) {
-  clickMeButton.addEventListener("click", () => handleButtonClick());
+if (searchButton) {
+  searchButton.addEventListener("click", () => handleButtonClick());
 }
 
 if (itemTitle) {
