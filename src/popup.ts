@@ -15,6 +15,7 @@ const bestMatchProductListItem = matchList?.querySelector(
 const bestMatchProductA = bestMatchProductListItem?.querySelector("a");
 const bestMatchProductTitle = bestMatchProductListItem?.querySelector("h4");
 const bestMatchProductP = bestMatchProductListItem?.querySelector("p");
+const timerResult = document.getElementById("timer-result");
 
 const setTitle = (title: string) => {
   if (itemTitle) itemTitle.textContent = title;
@@ -80,6 +81,7 @@ const handleButtonClick = async () => {
     currentWindow: true,
   });
   console.log("activeTab: ", activeTab);
+  const startTime = performance.now();
 
   let mcmasterItem: Partial<McMasterItem> = {};
   if (activeTab && activeTab[0].id) {
@@ -111,6 +113,9 @@ const handleButtonClick = async () => {
     urls.map((url) => executeMSCfuncs(url, mcmasterItem)),
   );
   console.log("windowResults: ", windowResults);
+  const currentTime = performance.now();
+  const elapsedTime = currentTime - startTime;
+  const seconds = elapsedTime / 1000;
 
   for (const windowResult of windowResults) {
     if (windowResult === undefined) continue;
@@ -127,6 +132,10 @@ const handleButtonClick = async () => {
       // setBestMatchedProduct(bestProduct, score);
       setFoundProducts([bestProduct], [score]);
     }
+  }
+
+  if (timerResult) {
+    timerResult.textContent = `Found in ${Math.round(seconds * 100) / 100}s`;
   }
 };
 
