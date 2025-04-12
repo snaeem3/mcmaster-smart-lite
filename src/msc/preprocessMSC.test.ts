@@ -1,5 +1,24 @@
 import { expect, test } from "vitest";
-import { preprocessCategoryOption } from "./preprocessMSC";
+import {
+  preprocessCategoryHeader,
+  preprocessCategoryOption,
+} from "./preprocessMSC";
+
+test('Converts "Bearing Number" to "Bearing Trade Number"', () => {
+  expect(preprocessCategoryHeader("Bearing Number")).toBe(
+    "Bearing Trade Number",
+  );
+});
+
+test('Converts "Inside Diameter (Decimal Inch)" to "ID"', () => {
+  expect(preprocessCategoryHeader("Inside Diameter (Decimal Inch)")).toBe("ID");
+});
+
+test('Converts "Outside Diameter (Decimal Inch)" to "OD"', () => {
+  expect(preprocessCategoryHeader("Outside Diameter (Decimal Inch)")).toBe(
+    "OD",
+  );
+});
 
 test("Removes a hyphen from a fraction", () => {
   expect(preprocessCategoryOption("1-1/2", "Length (Inch)")).toBe("1 1/2");

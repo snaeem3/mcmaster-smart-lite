@@ -1,3 +1,18 @@
+import removeFinalParenthesis from "../utils/removeFinalParenthesis";
+
+export function preprocessCategoryHeader(header: string) {
+  let result = header;
+  result = result.replace(/Bearing Number/gi, "Bearing Trade Number");
+
+  // Inside Diameter to ID
+  result = result.replace(/Inside Diameter/gi, "ID");
+  // Outside Diameter to OD
+  result = result.replace(/Outside Diameter/gi, "OD");
+
+  result = removeFinalParenthesis(result);
+  return result;
+}
+
 export function preprocessCategoryOption(
   option: string,
   category?: string,
