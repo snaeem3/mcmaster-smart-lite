@@ -2,8 +2,10 @@ import stringSimilarity from "string-similarity-js";
 import { McMasterItem } from "../Item";
 import { MSCItem } from "./MSCItem";
 import waitForTabToLoad from "../utils/waitForTabToLoad";
-import removeFinalParenthesis from "../utils/removeFinalParenthesis";
-import { preprocessCategoryOption } from "./preprocessMSC";
+import {
+  preprocessCategoryHeader,
+  preprocessCategoryOption,
+} from "./preprocessMSC";
 
 interface FeatureMatch {
   mcMasterName: string;
@@ -177,6 +179,7 @@ export default async function executeMSCfuncs(
 //#endregion
 
 //#region Helper Functions
+// TODO: Sort matchingFeatures by flatFeatures order
 function getFeatureMatches(
   categoryHeaders: string[],
   flatFeatures: Record<string, string>,
@@ -190,10 +193,7 @@ function getFeatureMatches(
     const likelyFeatures: FeatureMatch[] = [];
     for (const [key, value] of Object.entries(flatFeatures)) {
       const adjustedKey = caseInsensitive ? key.toLowerCase() : key;
-      let adjustedCategoryHeader = removeFinalParenthesis(
-        categoryHeader,
-        // "Inch",
-      );
+      let adjustedCategoryHeader = preprocessCategoryHeader(categoryHeader);
       adjustedCategoryHeader = caseInsensitive
         ? adjustedCategoryHeader.toLowerCase()
         : adjustedCategoryHeader;
