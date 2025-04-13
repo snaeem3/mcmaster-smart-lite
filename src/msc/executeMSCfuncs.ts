@@ -179,7 +179,6 @@ export default async function executeMSCfuncs(
 //#endregion
 
 //#region Helper Functions
-// TODO: Sort matchingFeatures by flatFeatures order
 function getFeatureMatches(
   categoryHeaders: string[],
   flatFeatures: Record<string, string>,
@@ -187,7 +186,8 @@ function getFeatureMatches(
   THRESHOLD = 0.9,
   DEBUG = false,
 ) {
-  const matchingFeatures: FeatureMatch[] = [];
+  const mcmasterFeatures = Object.keys(flatFeatures);
+  const matchingFeatures: FeatureMatch[] = new Array(mcmasterFeatures.length);
   for (const categoryHeader of categoryHeaders) {
     // Check if any McMaster features match the current MSC feature name
     const likelyFeatures: FeatureMatch[] = [];
@@ -212,13 +212,17 @@ function getFeatureMatches(
         });
     }
 
-    // Push the most likely feature into the final array
-    if (likelyFeatures.length > 0)
-      matchingFeatures.push(
-        likelyFeatures.sort((a, b) => b.similarity - a.similarity)[0],
-      );
+    // Push the most likely feature into the final array at the original index
+    if (likelyFeatures.length > 0) {
+      const featureToAdd = likelyFeatures.sort(
+        (a, b) => b.similarity - a.similarity,
+      )[0];
+      const index = mcmasterFeatures.indexOf(featureToAdd.mcMasterName);
+      matchingFeatures[index] = featureToAdd;
+    }
   }
-  return matchingFeatures;
+  // Filter out empty/non-matches
+  return matchingFeatures.filter(Boolean);
 }
 
 /**
