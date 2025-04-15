@@ -67,6 +67,30 @@ export default async function executeMSCfuncs(
       return [];
     }
 
+    let mscItems: Partial<MSCItem>[] = [];
+
+    // Handle search query directly linking to product page
+    let isProductPage = false;
+    try {
+      isProductPage = await chrome.tabs.sendMessage(tab.id, {
+        type: "IS_PRODUCT_PAGE",
+      });
+    } catch (error) {
+      console.error('Error sending "IS_PRODUCT_PAGE" message: ', error);
+    }
+    if (isProductPage) {
+      try {
+        const mscItem = await chrome.tabs.sendMessage(tab.id, {
+          type: "EXTRACT_PRODUCT",
+        });
+        await chrome.windows.remove(window.id);
+        mscItems.push(mscItem);
+        return mscItems;
+      } catch (error) {
+        console.error('Error sending "EXTRACT_PRODUCT" message: ', error);
+      }
+    }
+
     //#region Side Bar Filtering
     let accordionHeaders: string[] = [];
     try {
@@ -163,13 +187,12 @@ export default async function executeMSCfuncs(
     //#endregion
 
     //#region Search Result Extraction
-    let mscItems: Partial<MSCItem>[] = [];
     try {
       mscItems = await chrome.tabs.sendMessage(tab.id, {
-        type: "EXTRACT",
+        type: "EXTRACT_SEARCH_RESULTS",
       });
     } catch (error) {
-      console.error("Error sending EXTRACT: ", error);
+      console.error("Error sending EXTRACT_SEARCH_RESULTS: ", error);
     }
     console.log(`${mscItems.length} mscItems final: `, mscItems);
     //#endregion

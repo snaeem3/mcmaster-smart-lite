@@ -3,6 +3,7 @@ import {
   getAccordionHeaders,
   getCategoryOptions,
 } from "../msc/filterBar";
+import extractMSCProductPage from "../msc/extractMSCProductPage";
 import extractMSCSearchResults from "../msc/extractMSCSearchResults";
 
 // chrome.runtime.sendMessage({ action: "openPopup" });
@@ -21,6 +22,10 @@ console.log("Content script running on a whitelisted site.");
     if (mainDivs.some((div) => div.textContent?.includes(noResultsText)))
       return false;
     return true;
+  };
+
+  const isProductPage = (productPageQuery = "#pdp-new-product-details") => {
+    return document.querySelector(productPageQuery);
   };
 
   const headers = () => {
@@ -44,6 +49,12 @@ console.log("Content script running on a whitelisted site.");
       case "HAS_RESULTS":
         result = hasResults();
         break;
+      case "IS_PRODUCT_PAGE":
+        result = isProductPage();
+        break;
+      case "EXTRACT_PRODUCT":
+        result = extractMSCProductPage();
+        break;
       case "HEADERS":
         result = headers();
         console.log("otherData: ", otherData);
@@ -54,7 +65,7 @@ console.log("Content script running on a whitelisted site.");
       case "APPLY_FILTERS":
         result = applyFilters(featureCategoryName, optionsToSelect);
         break;
-      case "EXTRACT":
+      case "EXTRACT_SEARCH_RESULTS":
         result = extractMSCSearchResults();
         break;
       default:
