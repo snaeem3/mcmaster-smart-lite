@@ -20,8 +20,12 @@ test('Converts "Outside Diameter (Decimal Inch)" to "OD"', () => {
   );
 });
 
+test('Converts "Overall Length (Inch)" to "Length"', () => {
+  expect(preprocessCategoryHeader("Overall Length (Inch)")).toBe("Length");
+});
+
 test("Removes a hyphen from a fraction", () => {
-  expect(preprocessCategoryOption("1-1/2", "Length (Inch)")).toBe("1 1/2");
+  expect(preprocessCategoryOption("1-1/2", "Length (Inch)")).toBe('1 1/2"');
 });
 
 test("Thread Size conversion 1/4-20", () => {
@@ -56,6 +60,14 @@ test("Thread Size with no unit given (mm)", () => {
   expect(preprocessCategoryOption("M8")).toBe("M8");
 });
 
+test("1/4 - 20 Thread size (unusual spacing)", () => {
+  expect(preprocessCategoryOption("1/4 - 20")).toBe('1/4"-20');
+});
+
 test("Hyphen not removed if there are no numbers", () => {
   expect(preprocessCategoryOption("Flip-Flop")).toBe("Flip-Flop");
+});
+
+test('Includes " for Overall Length (Inch)', () => {
+  expect(preprocessCategoryOption("1", "Overall Length (Inch)")).toBe('1"');
 });

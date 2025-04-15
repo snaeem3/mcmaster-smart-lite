@@ -40,14 +40,16 @@ export default async function executeMSCfuncs(
     console.log("hopeful msc tab: ", tab);
     console.log("tab.id: ", tab.id);
     await waitForTabToLoad(tab.id);
-    try {
-      const mscTEST = await chrome.tabs.sendMessage(tab.id, {
-        type: "TEST",
-      });
+    if (DEBUG) {
+      try {
+        const mscTEST = await chrome.tabs.sendMessage(tab.id, {
+          type: "TEST",
+        });
 
-      console.log("mscTEST: ", mscTEST);
-    } catch (error) {
-      console.error('Error sending "TEST" message: ', error);
+        console.log("mscTEST: ", mscTEST);
+      } catch (error) {
+        console.error('Error sending "TEST" message: ', error);
+      }
     }
 
     // Handle 0 results found page
@@ -112,7 +114,7 @@ export default async function executeMSCfuncs(
         }
         console.log(`${match.MSCName} categoryOptions: `, categoryOptions);
         // Check if any option values match the featureValue
-        const THRESHOLD = 0.6;
+        const THRESHOLD = 0.75;
         let optionsToSelect: string[] = [];
 
         if (categoryOptions) {
@@ -143,15 +145,17 @@ export default async function executeMSCfuncs(
 
         // if a checkbox matches the item feature, click it
         let appliedFilters: string[] = [];
-        try {
-          appliedFilters = await chrome.tabs.sendMessage(tab.id, {
-            type: "APPLY_FILTERS",
-            featureCategoryName: match.MSCName,
-            optionsToSelect: [optionsToSelect[0]],
-          });
-          if (appliedFilters.length > 0) await waitForTabToLoad(tab.id);
-        } catch (error) {
-          console.error("Error sending APPLY_FILTERS: ", error);
+        if (optionsToSelect.length > 0) {
+          try {
+            appliedFilters = await chrome.tabs.sendMessage(tab.id, {
+              type: "APPLY_FILTERS",
+              featureCategoryName: match.MSCName,
+              optionsToSelect: [optionsToSelect[0]],
+            });
+            if (appliedFilters.length > 0) await waitForTabToLoad(tab.id);
+          } catch (error) {
+            console.error("Error sending APPLY_FILTERS: ", error);
+          }
         }
         console.log(`${match.MSCName} appliedFilters: `, appliedFilters);
       }
@@ -168,6 +172,7 @@ export default async function executeMSCfuncs(
       console.error("Error sending EXTRACT: ", error);
     }
     console.log(`${mscItems.length} mscItems final: `, mscItems);
+    //#endregion
 
     await chrome.windows.remove(window.id);
 
@@ -176,7 +181,6 @@ export default async function executeMSCfuncs(
     console.error("Error in executeScriptOnWindow: ", error);
   }
 }
-//#endregion
 
 //#region Helper Functions
 function getFeatureMatches(
@@ -218,7 +222,9 @@ function getFeatureMatches(
         (a, b) => b.similarity - a.similarity,
       )[0];
       const index = mcmasterFeatures.indexOf(featureToAdd.mcMasterName);
-      matchingFeatures[index] = featureToAdd;
+      // Only add the feature match if it's empty, ensures no overriding
+      // TODO - override the existing match if it is better?
+      if (!matchingFeatures[index]) matchingFeatures[index] = featureToAdd;
     }
   }
   // Filter out empty/non-matches

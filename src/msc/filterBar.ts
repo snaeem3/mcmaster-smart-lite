@@ -61,19 +61,18 @@ export function getCategoryOptions(
         : "";
     });
   }
-
-  // Function to remove the <span>(number)</span> from the label
-  function extractTextExcludingSpan(labelElement: HTMLLabelElement) {
-    let result = "";
-    labelElement.childNodes.forEach((node) => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        result += node.textContent;
-      }
-    });
-    return result.trim();
-  }
-  //#endregion
 }
+// Function to remove the <span>(number)</span> from the label
+function extractTextExcludingSpan(labelElement: HTMLLabelElement) {
+  let result = "";
+  labelElement.childNodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      result += node.textContent;
+    }
+  });
+  return result.trim();
+}
+//#endregion
 
 export function applyFilters(
   categoryName: string,
@@ -105,9 +104,28 @@ export function applyFilters(
   // NOTE: Clicking the left bar checkbox immediately applies
 
   for (const optionToSelect of optionsToSelect) {
-    const li = [...ul.querySelectorAll(`li`)].find((element) =>
-      element.textContent?.includes(optionToSelect),
-    );
+    // Look for the <li> that contains optionToSelect
+    const li = [...ul.querySelectorAll(`li`)].find((element) => {
+      console.log("li element: ", element);
+      const dataRefinementValue = element
+        .querySelector("a")
+        ?.getAttribute("data-refinement-value");
+      console.log("dataRefinementValue: ", dataRefinementValue);
+      if (dataRefinementValue) return dataRefinementValue === optionToSelect;
+      // Plan B
+      // TODO: Verify this works correctly
+      const label = extractTextExcludingSpan(
+        element.querySelectorAll("label")[1],
+      );
+      console.log(
+        "label: ",
+        label,
+        " should match optionToSelect: ",
+        optionToSelect,
+      );
+
+      return label === optionToSelect;
+    });
     const labelToClick = li?.querySelector("label");
     console.log(labelToClick?.getHTML());
     if (labelToClick instanceof HTMLElement) {

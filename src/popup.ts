@@ -75,7 +75,7 @@ const clearFoundProducts = () => {
   }
 };
 
-const handleButtonClick = async () => {
+const handleButtonClick = async (DEBUG = false) => {
   const activeTab = await chrome.tabs.query({
     active: true,
     currentWindow: true,
@@ -97,7 +97,10 @@ const handleButtonClick = async () => {
 
   // Create search queries from extracted mcmaster data
   const searchQueries = createSearchQueries(mcmasterItem);
-  console.log("searchQueries: ", searchQueries.toLocaleString());
+  if (DEBUG)
+    searchQueries.forEach((searchQuery, index) =>
+      console.log(`searchQuery(${index}): ${searchQuery.toString()}`),
+    );
 
   const testURL =
     "https://www.mscdirect.com/browse/tn?rd=k&searchterm=ID+Tag+Cable+Tie";
@@ -110,7 +113,9 @@ const handleButtonClick = async () => {
   // TODO: Add try-catch below?
   // Execute MSC scripts using created search queries
   const windowResults = await Promise.all(
-    urls.map((url) => executeMSCfuncs(url, mcmasterItem)),
+    DEBUG
+      ? [executeMSCfuncs(urls[0], mcmasterItem)]
+      : urls.map((url) => executeMSCfuncs(url, mcmasterItem)),
   );
   console.log("windowResults: ", windowResults);
   const currentTime = performance.now();
