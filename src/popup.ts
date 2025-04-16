@@ -144,6 +144,14 @@ const handleButtonClick = async (DEBUG = false) => {
   }
 };
 
+document.addEventListener("click", (evt) => {
+  const a = (evt.target as HTMLElement).closest("a[href]");
+  if (a instanceof HTMLAnchorElement) {
+    evt.preventDefault();
+    chrome.tabs.create({ url: a.href, active: false });
+  }
+});
+
 if (searchButton) {
   searchButton.addEventListener("click", () => handleButtonClick());
 }
