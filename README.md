@@ -1,4 +1,4 @@
-# McMaster-Smart
+# McMaster-Smart-Lite
 
 > Browser extension to find cheaper hardware alternatives
 
@@ -24,9 +24,7 @@ This roadmap describes my current, future, and past goals for this project.
 * Improve search queries created by `createSearchQueries.ts` to yield better search results
 * Improve selection/ranking of found alternatives in `bestMatchingProducts.ts`
 * Automate extension testing
-* Switch from vanilla JS to a front-end framework
-* Make features editable/selectable before searching
-* Improve MSC side bar filtering to better recognize equivalent terms such as "Length" "Length (Inch)" and "Length (Decimal Inch)"
+
 
 ### Future
 * Search other sites besides MSC
@@ -40,3 +38,4 @@ This roadmap describes my current, future, and past goals for this project.
 - [x] Successfully query MSC results and return the search results back to the extension
 - [x] Successfully apply left-hand side MSC filters to narrow search results
 - [x] Create preprocessing steps for converting MSC string data to match McMaster's format
+- [x] Improve MSC side bar filtering to better recognize equivalent terms such as "Length" "Length (Inch)" and "Length (Decimal Inch)"
