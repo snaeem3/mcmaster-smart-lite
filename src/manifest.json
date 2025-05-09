@@ -3,10 +3,6 @@
     "name": "McMaster Smart Lite",
     "version": "1.0",
     "description": "Searches competitor websites for cheaper alternatives to your McMaster products",
-    "permissions": [
-        "activeTab",
-        "tabs"
-    ],
     "background": {
         "service_worker": "assets/background.js"
     },

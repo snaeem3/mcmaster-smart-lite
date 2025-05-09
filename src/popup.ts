@@ -157,7 +157,8 @@ if (searchButton) {
 }
 
 if (itemTitle) {
-  itemTitle.textContent = "test";
+  itemTitle.textContent =
+    "Click the Search MSC button to begin. Results will be displayed below.";
 
   getActiveTabURL().then((activeTab) => {
     if (activeTab && activeTab.url) {
