@@ -4,7 +4,7 @@
 
 I use [McMaster-Carr](mcmaster.com) a lot, but have frequently found their prices to be higher than their competitors ([MSC](mscdirect.com), [Grainger](grainger.com), etc.). However, the UI on competitor websites makes searching for alternatives frustrating.
 
-This extension aims to solve this problem by quickly searching for your McMaster product elsewhere.
+This extension aims to solve this problem by quickly searching for your McMaster product elsewhere. The McMaster Smart Lite extension is designed to be a simple 1-click interface. For more advanced search options and additional features, please check out the [McMaster Smart](https://github.com/snaeem3/mcmaster-smart) chrome extension.
 
 ## Install
 1. Fork this repository and use the `git clone` command in your terminal to clone it to your machine

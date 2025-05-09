@@ -11,7 +11,7 @@ export default [
     input: {
       background: "./src/background.ts",
       popup: "./src/popup.ts",
-      content: "./src/scripts/content.ts",
+      mcmasterScript: "./src/scripts/mcmasterScript.ts",
       utils: "./src/utils/getActiveTabURL.ts", // change to ./src/utils/**/*.ts with rollup multi plugin
     },
     output: {

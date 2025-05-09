@@ -1,18 +1,19 @@
 {
     "manifest_version": 3,
-    "name": "McMaster Smart",
+    "name": "McMaster Smart Lite",
     "version": "1.0",
     "description": "Searches competitor websites for cheaper alternatives to your McMaster products",
     "permissions": [
-        "scripting",
         "activeTab",
         "tabs"
     ],
-    "host_permissions": [
-      "https://www.mscdirect.com/*"
-    ],
     "background": {
         "service_worker": "assets/background.js"
+    },
+    "icons": {
+      "16": "assets/icon48.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon48.png"
     },
     "action": {
         "default_popup": "assets/popup.html",
@@ -22,7 +23,7 @@
     },
     "content_scripts": [
     {
-      "js": ["assets/content.js"],
+      "js": ["assets/mcmasterScript.js"],
       "matches": [
         "https://www.mcmaster.com/*"
       ]
