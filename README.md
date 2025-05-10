@@ -2,7 +2,7 @@
 
 > Browser extension to find cheaper hardware alternatives
 
-I use [McMaster-Carr](mcmaster.com) a lot, but have frequently found their prices to be higher than their competitors ([MSC](mscdirect.com), [Grainger](grainger.com), etc.). However, the UI on competitor websites makes searching for alternatives frustrating.
+I use [McMaster-Carr](https://mcmaster.com) a lot, but have frequently found their prices to be higher than their competitors ([MSC](https://mscdirect.com), [Grainger](https://grainger.com), etc.). However, the UI on competitor websites makes searching for alternatives frustrating.
 
 This extension aims to solve this problem by quickly searching for your McMaster product elsewhere. The McMaster Smart Lite extension is designed to be a simple 1-click interface. For more advanced search options and additional features, please check out the [McMaster Smart](https://github.com/snaeem3/mcmaster-smart) chrome extension.
 
@@ -20,7 +20,7 @@ This extension aims to solve this problem by quickly searching for your McMaster
 6. Click _Select Folder_
 7. Ensure that the extension is enabled in [chrome://extensions/](chrome://extensions/)
 
-The extension should now be running when you visit a [McMaster-Carr](mcmaster.com) product page.
+The extension should now be running when you visit a [McMaster-Carr](https://mcmaster.com) product page.
 
 ## Roadmap
 This roadmap describes my current, future, and past goals for this project. 
