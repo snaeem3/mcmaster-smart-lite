@@ -23,7 +23,7 @@ console.log("Content script running on a whitelisted site.");
         table.className.includes("ProductDetail"),
       );
       if (!productDetailTable) {
-        console.warn("ProductDetail table not found- using last table on page");
+        console.log("ProductDetail table not found- using last table on page");
         pageObj.itemFeatures = extractTable(tables[tables.length - 1]);
       } else pageObj.itemFeatures = extractTable(productDetailTable);
     }

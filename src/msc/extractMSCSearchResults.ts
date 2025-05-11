@@ -1,4 +1,3 @@
-// import { Price } from "../Item";
 import { MSCItem } from "./MSCItem";
 
 export default function extractMSCSearchResults(
@@ -78,7 +77,7 @@ export default function extractMSCSearchResults(
     try {
       firstDescriptionSeparator = checkSemicolonVsColon(primaryDescText);
     } catch (error) {
-      console.warn(error);
+      console.log(error);
       return { primaryName: primaryDescText, desc: "" };
     }
     let splitPrimaryDescText: string[];

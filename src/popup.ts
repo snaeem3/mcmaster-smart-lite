@@ -130,7 +130,7 @@ const handleButtonClick = async (DEBUG = false) => {
       windowResult,
       THRESHOLD,
     );
-    if (error) console.error(error);
+    if (error) console.log(error);
     else if (bestProduct) {
       console.log("bestProduct: ", bestProduct);
       console.log("score: ", score);

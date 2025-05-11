@@ -69,7 +69,7 @@ console.log("Content script running on a whitelisted site.");
         result = extractMSCSearchResults();
         break;
       default:
-        console.warn("undefined type received: ", type);
+        console.log("undefined type received: ", type);
     }
     console.log("mscScript result: ", result);
     // return results to popup
