@@ -4,10 +4,17 @@ chrome.runtime.sendMessage({ action: "openPopup" });
 console.log("Content script running on a whitelisted site.");
 
 (() => {
+  function getBetweenLastTwoSlashes(str: string) {
+    const lastSlash = str.lastIndexOf("/");
+    const secondLastSlash = str.lastIndexOf("/", lastSlash - 1);
+    return str.substring(secondLastSlash + 1, lastSlash);
+  }
+
   const scanPage = () => {
     const title = document.querySelector("h1")?.textContent;
     const h3 = document.querySelector("h3")?.textContent;
     const tables = [...document.querySelectorAll("table")];
+    const currentUrl = window.location.href;
     // TODO: extract price
 
     const pageObj: Partial<McMasterItem> = {
@@ -16,6 +23,8 @@ console.log("Content script running on a whitelisted site.");
     };
     if (title) pageObj.primaryName = title;
     if (h3) pageObj.secondaryName = h3;
+
+    pageObj.mcMasterId = getBetweenLastTwoSlashes(currentUrl);
 
     if (tables.length === 1) pageObj.itemFeatures = extractTable(tables[0]);
     else {

@@ -3,6 +3,7 @@ import extractTable from "../extractTable";
 export default function extractMSCProductPage(
   productDetailsQuery = ".pdp-details-container",
 ): Record<string, string | Record<string, string>> {
+  const primaryName = document.querySelector("h1")?.textContent?.trim();
   const productDetailsContainer = document.querySelector(productDetailsQuery);
   if (!productDetailsContainer)
     throw new Error(
@@ -14,5 +15,9 @@ export default function extractMSCProductPage(
 
   const tables = [...tablesNodeList];
   const results = tables.map((table) => extractTable(table));
-  return Object.assign({}, ...results); // Assuming MSC has no nested tables. Would need to be rewritten with a deep merge if so
+  const mscItem = Object.assign({}, ...results); // Assuming MSC has no nested tables. Would need to be rewritten with a deep merge if so
+  const url = window.location.href;
+  mscItem.url = url;
+  mscItem.primaryName = primaryName;
+  return mscItem;
 }

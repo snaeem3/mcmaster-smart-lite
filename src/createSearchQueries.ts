@@ -29,5 +29,11 @@ export default function createSearchQueries(
     searchterm: `${McMasterItem.primaryName} ${McMasterItem.secondaryName}`,
   });
   results.push(searchParams);
+
+  // Method 3- McMaster P/N
+  searchParams = new URLSearchParams({
+    searchterm: `${McMasterItem.mcMasterId}`,
+  });
+  if (McMasterItem.mcMasterId) results.push(searchParams);
   return results;
 }

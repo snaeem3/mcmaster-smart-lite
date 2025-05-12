@@ -36,7 +36,7 @@ const setBestMatchedProduct = (mscItem: Partial<MSCItem>, score: number) => {
     bestMatchProductP.textContent = `Match: ${Math.round((score + Number.EPSILON) * 100) / 100}`;
 };
 
-function createMSCli(itemName: string, href: string | URL, score: number) {
+function createMSCli(itemName: string, href: string | URL, score?: number) {
   const li = document.createElement("li");
   const h4 = document.createElement("h4");
   const a = document.createElement("a");
@@ -45,7 +45,8 @@ function createMSCli(itemName: string, href: string | URL, score: number) {
   h4.textContent = itemName;
   a.href = href.toString();
   a.target = "_blank";
-  p.textContent = `Match: ${Math.round((score + Number.EPSILON) * 100) / 100}`;
+  if (score)
+    p.textContent = `Match: ${Math.round((score + Number.EPSILON) * 100) / 100}`;
 
   a.appendChild(h4);
   li.append(a, p);
@@ -54,7 +55,7 @@ function createMSCli(itemName: string, href: string | URL, score: number) {
 
 const setFoundProducts = (
   mscItems: Partial<MSCItem>[],
-  scores: number[],
+  scores?: number[],
   numToShow?: number,
 ) => {
   let numItems = mscItems.length;
@@ -63,7 +64,7 @@ const setFoundProducts = (
     const itemLi = createMSCli(
       mscItems[i].primaryName as string,
       mscItems[i].url as string | URL,
-      scores[i],
+      scores ? scores[i] : undefined,
     );
     matchList?.appendChild(itemLi);
   }
@@ -124,6 +125,11 @@ const handleButtonClick = async (DEBUG = false) => {
 
   for (const windowResult of windowResults) {
     if (windowResult === undefined) continue;
+    if (windowResult.length === 1) {
+      setFoundProducts(windowResult);
+      continue;
+    }
+
     const THRESHOLD = 0.1;
     const { bestProduct, score, error } = getBestMatchingProduct(
       mcmasterItem,
