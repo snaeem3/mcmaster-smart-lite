@@ -140,7 +140,6 @@ const handleButtonClick = async (DEBUG = false) => {
     else if (bestProduct) {
       console.log("bestProduct: ", bestProduct);
       console.log("score: ", score);
-      // setBestMatchedProduct(bestProduct, score);
       setFoundProducts([bestProduct], [score]);
     }
   }

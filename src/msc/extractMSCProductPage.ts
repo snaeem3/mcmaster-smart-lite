@@ -1,23 +1,32 @@
 import extractTable from "../extractTable";
+import { MSCItem } from "./MSCItem";
 
 export default function extractMSCProductPage(
   productDetailsQuery = ".pdp-details-container",
-): Record<string, string | Record<string, string>> {
-  const primaryName = document.querySelector("h1")?.textContent?.trim();
+  mscPartNumberQuery = "#basePartNumber",
+  mscPartNumberAttribute = "data-partnumber",
+): Partial<MSCItem> {
+  const primaryName = document.querySelector("h1")?.textContent?.trim() ?? "";
   const productDetailsContainer = document.querySelector(productDetailsQuery);
   if (!productDetailsContainer)
     throw new Error(
       `Product Details Container not found with query ${productDetailsQuery}`,
     );
+  const mscPartNumberElement = document.querySelector(mscPartNumberQuery);
+  const mscId =
+    mscPartNumberElement?.getAttribute(mscPartNumberAttribute) ?? "";
 
-  const tablesNodeList = productDetailsContainer.querySelectorAll("table");
-  if (!tablesNodeList) throw new Error("No tables found");
-
-  const tables = [...tablesNodeList];
-  const results = tables.map((table) => extractTable(table));
-  const mscItem = Object.assign({}, ...results); // Assuming MSC has no nested tables. Would need to be rewritten with a deep merge if so
+  const table = productDetailsContainer.querySelector("table");
+  if (!table) throw new Error("No table found");
+  // Assuming MSC has no nested tables. Would need to be rewritten with a deep merge if so
+  const itemFeatures = extractTable(table);
   const url = window.location.href;
-  mscItem.url = url;
-  mscItem.primaryName = primaryName;
+
+  const mscItem: Partial<MSCItem> = {
+    itemFeatures,
+    primaryName,
+    url,
+    mscId,
+  };
   return mscItem;
 }
