@@ -41,8 +41,6 @@ export default function extractMSCSearchResults(
       productDescriptionTexts && productDescriptionTexts[1].textContent?.trim();
     const secondaryDescText =
       productDescriptionTexts && productDescriptionTexts[2].textContent?.trim();
-    const inStockText =
-      productDescriptionTexts && productDescriptionTexts[3].textContent?.trim();
 
     const mscItem: Partial<MSCItem> = {};
     if (typeof primaryDescText === "string") {
