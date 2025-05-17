@@ -3,7 +3,6 @@ export function getAccordionHeaders(
   headerQuery = ".accordionHeader",
 ) {
   const filterBar = document.querySelector(filterBaryQuery) as HTMLDivElement;
-
   const accordionHeadersNodeList = filterBar.querySelectorAll(headerQuery);
   const accordionHeaders = [...accordionHeadersNodeList];
   return accordionHeaders.map((accordionHeader) =>
@@ -32,6 +31,7 @@ export function getCategoryOptions(
   let options: string[] = [];
   let ul: HTMLUListElement;
   if (showMoreDiv instanceof HTMLElement) {
+    // TODO: Add test for this
     showMoreDiv.click();
     ul = document.querySelector(filterModalULQuery) as HTMLUListElement;
   } else {
