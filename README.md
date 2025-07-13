@@ -7,11 +7,23 @@ I use [McMaster-Carr](https://mcmaster.com) a lot, but have frequently found the
 This extension aims to solve this problem by quickly searching for your McMaster product elsewhere. The McMaster Smart Lite extension is designed to be a simple 1-click interface. For more advanced search options and additional features, please check out the [McMaster Smart](https://github.com/snaeem3/mcmaster-smart) chrome extension.
 
 <p align="center">
-<sub>Popup</sub><br/>
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/11710951/449775728-e8157419-6690-4dc0-8a69-e789f0a93750.PNG?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250601%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250601T140412Z&X-Amz-Expires=300&X-Amz-Signature=6bd1884225e44d2a524952f347c66b7b75b0d74827b5edf89cd676c8c0a927c9&X-Amz-SignedHeaders=host"><br/>
+<sub>Popup</sub>
+<br/>
+  <img width="282" height="220" alt="Lite popup" src="https://github.com/user-attachments/assets/b61c1af5-8a75-486b-a15e-4222f1424436" valign="middle"/>
+  <img width="266" height="350" alt="Lite results" src="https://github.com/user-attachments/assets/7dc880db-eaae-462c-885d-65a1a5e6c892" valign="middle"/>
+<br/>
 </p>
 
 ## Install
+[link-chrome]: https://chromewebstore.google.com/detail/mcmaster-smart-lite/nmlkcbnplhaffhooaioodjlghepdlopk 'Version published on Chrome Web Store'
+[link-edge]: https://microsoftedge.microsoft.com/addons/detail/mcmaster-smart-lite/elneomkapagamimnpageolddlpcaemdc 'Version published on Edge Add-ons'
+
+[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/chrome/chrome.svg" width="48" alt="Chrome" valign="middle">][link-chrome] Chrome download
+
+[<img width="48" alt="Edge" src="https://github.com/user-attachments/assets/5d735aaa-d9cb-46df-8348-5fa2644401e0" valign="middle">][link-edge] Edge download
+
+
+## Developer Install
 1. Fork this repository and use the `git clone` command in your terminal to clone it to your machine
 2. `cd` into the cloned repository and run `npm install` to install the dependencies
 3. Run `npm build:bundle` to create the extension bundle
@@ -28,7 +40,7 @@ This roadmap describes my current, future, and past goals for this project.
 ### Current
 * Improve search queries created by `createSearchQueries.ts` to yield better search results
 * Improve selection/ranking of found alternatives in `bestMatchingProducts.ts`
-* Automate extension testing
+* Create a CI/CD pipeline to automatically update the extension in the chrome/edge web stores
 
 
 ### Future
