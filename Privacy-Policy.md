@@ -1,10 +1,10 @@
 # Privacy Policy
 
-_Last updated: May 15, 2025_
+_Last updated: July 13, 2025_
 
 ## Introduction
 
-**McMaster Smart Lite** ("the Extension") is a Chrome browser extension designed to help users find alternative products and pricing from competitor websites. Your privacy is important to us. This Privacy Policy explains what information the Extension collects, how it is used, and your choices regarding your information.
+**McMaster Smart Lite** ("the Extension") is a Chrome and Edge browser extension designed to help users find alternative products and pricing from competitor websites. Your privacy is important to us. This Privacy Policy explains what information the Extension collects, how it is used, and your choices regarding your information.
 
 ## Information We Collect
 
