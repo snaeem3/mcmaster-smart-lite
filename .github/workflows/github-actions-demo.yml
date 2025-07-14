@@ -14,6 +14,30 @@ jobs:
       # - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 2  # Fetch last commit to compare with
+
+    - name: Compare manifest.json version
+      id: version_check
+      run: |
+        PREV_VERSION=$(git show HEAD^:src/manifest.json | jq -r '.version')
+        CURR_VERSION=$(cat src/manifest.json | jq -r '.version')
+
+
+        echo "Previous version: $PREV_VERSION"
+        echo "Current version: $CURR_VERSION"
+
+        if [ "$PREV_VERSION" != "$CURR_VERSION" ]; then
+          echo "Version changed!"
+          echo "changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "No version change."
+          echo "changed=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Stop workflow if version didn't change
+      if: steps.version_check.outputs.changed == 'false'
+      run: echo "Skipping deployment — version hasn't changed."
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -25,4 +49,25 @@ jobs:
 
     - name: Run tests
       run: npm test
+
+    - name: Install Zip (if necessary)
+      run: sudo apt-get update && sudo apt-get install -y zip
+
+    - name: Zip extension
+      if: steps.version_check.outputs.changed == 'true'
+      run: |
+        cd distribution
+        zip -r ../extension.zip .
+
+    - name: Upload to Chrome Web Store
+      if: steps.version_check.outputs.changed == 'true'
+      uses: mobilefirstllc/cws-publish@latest
+      with:
+        action: 'upload' 
+        client_id: ${{ secrets.CLIENT }}
+        client_secret: ${{ secrets.SECRET }}
+        refresh_token: ${{ secrets.TOKEN }}
+        extension_id: ${{ secrets.EXTENSION_ID }}
+        zip_file: 'extension.zip'
+
     - run: echo "🍏 This job's status is ${{ job.status }}."
