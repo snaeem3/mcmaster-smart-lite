@@ -8,6 +8,7 @@ on:
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       # - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       # - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -61,6 +62,10 @@ jobs:
       run: |
         cd distribution
         zip -r ../extension.zip .
+
+    - name: List files in current directory # Ensuring extension.zip was successfully created
+      if: steps.version_check.outputs.changed == 'true'
+      run: ls -lh
 
     - name: Upload to Chrome Web Store
       if: steps.version_check.outputs.changed == 'true'
