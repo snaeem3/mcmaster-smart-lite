@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "McMaster Smart Lite",
-    "version": "1.0",
+    "version": "1.0.1",
     "description": "Searches competitor websites for cheaper alternatives to your McMaster products",
     "background": {
         "service_worker": "assets/background.js"
