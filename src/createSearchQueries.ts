@@ -24,7 +24,6 @@ export default function createSearchQueries(
   }
 
   // Method 2- combine primary name and secondary name
-  console.log("McMasterItem.secondaryName: ", McMasterItem.secondaryName);
   searchParams = new URLSearchParams({
     searchterm: `${McMasterItem.primaryName} ${McMasterItem.secondaryName}`,
   });
