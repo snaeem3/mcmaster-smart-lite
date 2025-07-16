@@ -1,5 +1,5 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Publish New Version
+run-name: ${{ github.actor }} is publishing a new extension version
 on:
   push:
     branches: [ main ]
@@ -67,11 +67,11 @@ jobs:
       if: steps.version_check.outputs.changed == 'true'
       run: ls -lh
 
-    - name: Upload to Chrome Web Store
+    - name: Publish to Chrome Web Store
       if: steps.version_check.outputs.changed == 'true'
       uses: mobilefirstllc/cws-publish@latest
       with:
-        action: 'upload' 
+        action: 'publish' 
         client_id: ${{ secrets.CLIENT }}
         client_secret: ${{ secrets.SECRET }}
         refresh_token: ${{ secrets.TOKEN }}
