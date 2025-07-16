@@ -40,8 +40,7 @@ This roadmap describes my current, future, and past goals for this project.
 ### Current
 * Improve search queries created by `createSearchQueries.ts` to yield better search results
 * Improve selection/ranking of found alternatives in `bestMatchingProducts.ts`
-* Create a CI/CD pipeline to automatically update the extension in the chrome/edge web stores
-
+* Update the CI/CD pipeline to automatically update the extension in the Edge marketplace
 
 ### Future
 * Search other sites besides MSC
@@ -56,3 +55,4 @@ This roadmap describes my current, future, and past goals for this project.
 - [x] Successfully apply left-hand side MSC filters to narrow search results
 - [x] Create preprocessing steps for converting MSC string data to match McMaster's format
 - [x] Improve MSC side bar filtering to better recognize equivalent terms such as "Length" "Length (Inch)" and "Length (Decimal Inch)"
+- [x] Create a CI/CD pipeline to automatically update the extension in the chrome store on manifest version updateW
