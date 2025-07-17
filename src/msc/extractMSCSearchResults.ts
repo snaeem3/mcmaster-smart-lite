@@ -23,7 +23,9 @@ export default function extractMSCSearchResults(
     const searchResultHTMLCollection = ListSearchResults.children;
     for (let i = 0; i < searchResultHTMLCollection.length; i++) {
       const searchResultDiv = searchResultHTMLCollection[i];
+      const mscIdData = searchResultDiv.getAttribute("data-part-id");
       const mscItem = extractSearchResult(searchResultDiv);
+      if (mscIdData) mscItem.mscId = mscIdData;
       searchResults.push(mscItem);
     }
 
