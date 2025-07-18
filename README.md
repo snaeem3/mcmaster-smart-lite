@@ -34,6 +34,54 @@ This extension aims to solve this problem by quickly searching for your McMaster
 
 The extension should now be running when you visit a [McMaster-Carr](https://mcmaster.com) product page.
 
+## Architecture
+
+The following sequence diagram illustrates the flow of data and control between the user, the extension popup, and the content scripts injected into McMaster-Carr and MSC Direct pages.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Popup as Extension Popup
+    participant McMaster as McMaster Tab<br/>(Content Script)
+    participant MSC as Hidden MSC Window<br/>(Content Script)
+
+    User->>Popup: Clicks "Search"
+    Popup->>McMaster: Send "SCAN" message
+    McMaster-->>Popup: Return product data (McMasterItem)
+    
+    Popup->>Popup: Generate search queries
+    
+    loop For each search query
+        Popup->>MSC: Create hidden window with search URL
+        activate MSC
+        
+        note right of Popup: Background orchestration via executeMSCfuncs.ts
+
+        Popup->>MSC: Send "HAS_RESULTS"
+        MSC-->>Popup: boolean via DOM check
+        
+        opt If results exist
+            Popup->>MSC: Send "HEADERS" (Get side-bar filters)
+            MSC-->>Popup: Return filter categories
+            
+            loop Filter Matching
+                Popup->>MSC: Send "CATEGORY_OPTIONS"
+                MSC-->>Popup: Return available options
+                Popup->>MSC: Send "APPLY_FILTERS"
+            end
+            
+            Popup->>MSC: Send "EXTRACT_SEARCH_RESULTS"
+            MSC-->>Popup: Return found items (MSCItem[])
+        end
+        
+        Popup->>MSC: Close Window
+        deactivate MSC
+    end
+
+    Popup->>Popup: Compute string similarity & ranking
+    Popup-->>User: Display best match & alternatives
+```
+
 ## Roadmap
 This roadmap describes my current, future, and past goals for this project. 
 
