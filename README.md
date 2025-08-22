@@ -26,7 +26,7 @@ This extension aims to solve this problem by quickly searching for your McMaster
 ## Developer Install
 1. Fork this repository and use the `git clone` command in your terminal to clone it to your machine
 2. `cd` into the cloned repository and run `npm install` to install the dependencies
-3. Run `npm build:bundle` to create the extension bundle
+3. Run `npm run build:bundle` to create the extension bundle
 4. Navigate to [chrome://extensions/](chrome://extensions/) and turn on _Developer Mode_ in the top right corner
 5. Click the _Load unpacked_ button and navigate to the `/distribution` folder
 6. Click _Select Folder_
