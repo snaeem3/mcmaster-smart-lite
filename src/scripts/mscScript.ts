@@ -24,8 +24,10 @@ console.log("Content script running on a whitelisted site.");
     return true;
   };
 
-  const isProductPage = (productPageQuery = "#pdp-new-product-details") => {
-    return document.querySelector(productPageQuery);
+  const isProductPage = (
+    productPageQueries = ["#pdp-new-product-details", "#product-content"],
+  ) => {
+    return productPageQueries.some((query) => document.querySelector(query));
   };
 
   const headers = () => {

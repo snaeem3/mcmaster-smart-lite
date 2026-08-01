@@ -1,25 +1,22 @@
-import extractTable from "../extractTable";
+import extractMscTable from "./extractMscTable";
 import { MSCItem } from "./MSCItem";
 
 export default function extractMSCProductPage(
-  productDetailsQuery = ".pdp-details-container",
-  mscPartNumberQuery = "#basePartNumber",
-  mscPartNumberAttribute = "data-partnumber",
+  primaryNameSelector = "h1",
+  productDetailsQuery = "#specs-table-wrapper",
 ): Partial<MSCItem> {
-  const primaryName = document.querySelector("h1")?.textContent?.trim() ?? "";
+  const primaryName =
+    document.querySelector(primaryNameSelector)?.textContent?.trim() ?? "";
   const productDetailsContainer = document.querySelector(productDetailsQuery);
   if (!productDetailsContainer)
     throw new Error(
       `Product Details Container not found with query ${productDetailsQuery}`,
     );
-  const mscPartNumberElement = document.querySelector(mscPartNumberQuery);
-  const mscId =
-    mscPartNumberElement?.getAttribute(mscPartNumberAttribute) ?? "";
+  const mscId = getMscPartNumber() ?? "";
 
   const table = productDetailsContainer.querySelector("table");
   if (!table) throw new Error("No table found");
-  // Assuming MSC has no nested tables. Would need to be rewritten with a deep merge if so
-  const itemFeatures = extractTable(table);
+  const itemFeatures = extractMscTable(table);
   const url = window.location.href;
 
   const mscItem: Partial<MSCItem> = {
@@ -29,4 +26,27 @@ export default function extractMSCProductPage(
     mscId,
   };
   return mscItem;
+}
+
+function getMscPartNumber(
+  element: HTMLElement | Document = document,
+  precedingText = "MSC#",
+): string | null {
+  const cells = Array.from(element.querySelectorAll("td"));
+
+  const labelCell = cells.find(
+    (td) => td.textContent?.trim() === precedingText,
+  );
+
+  if (!labelCell) {
+    return null;
+  }
+
+  const valueCell = labelCell.nextElementSibling;
+
+  if (!(valueCell instanceof HTMLTableCellElement)) {
+    return null;
+  }
+
+  return valueCell.textContent?.trim() ?? null;
 }
