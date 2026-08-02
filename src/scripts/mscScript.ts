@@ -6,7 +6,7 @@ import {
 import extractMSCProductPage from "../msc/extractMSCProductPage";
 import extractMSCSearchResults from "../msc/extractMSCSearchResults";
 
-// chrome.runtime.sendMessage({ action: "openPopup" });
+// Read console.logs in MSC window popup
 console.log("Content script running on a whitelisted site.");
 (() => {
   const mscTest = () => {

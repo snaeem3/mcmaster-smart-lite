@@ -14,6 +14,7 @@ interface FeatureMatch {
   similarity: number;
 }
 
+// Read console.logs in popup.html devtools
 export default async function executeMSCfuncs(
   url: string,
   mcmasterItem?: Partial<McMasterItem>,
@@ -40,6 +41,9 @@ export default async function executeMSCfuncs(
     console.log("hopeful msc tab: ", tab);
     console.log("tab.id: ", tab.id);
     await waitForTabToLoad(tab.id);
+
+    await waitForMscCookies();
+
     if (DEBUG) {
       try {
         const mscTEST = await chrome.tabs.sendMessage(tab.id, {
@@ -285,4 +289,19 @@ function flattenRecord(
   }
 
   return result;
+}
+
+async function waitForMscCookies(maxRetries = 3, waitLength = 5000) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const cookies = await chrome.cookies.getAll({});
+    if (cookies.length > 2) {
+      return true;
+    }
+
+    if (attempt < maxRetries) {
+      await new Promise((resolve) => setTimeout(resolve, waitLength));
+    }
+  }
+
+  return false;
 }
