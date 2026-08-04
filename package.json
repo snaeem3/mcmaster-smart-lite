@@ -1,13 +1,14 @@
 {
   "name": "mcmaster-smart-lite",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "main": "background.js",
   "scripts": {
     "test": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build:bundle": "rollup -c",
-    "watch:bundle": "rollup -c --watch"
+    "watch:bundle": "rollup -c --watch",
+    "version": "node -e \"let m=require('./manifest.json'); m.version=process.env.npm_package_version; require('fs').writeFileSync('./manifest.json', JSON.stringify(m, null, 2))\" && git add manifest.json"
   },
   "keywords": [],
   "author": "",
