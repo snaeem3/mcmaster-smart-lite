@@ -8,7 +8,7 @@
     "lint:fix": "eslint . --fix",
     "build:bundle": "rollup -c",
     "watch:bundle": "rollup -c --watch",
-    "version": "node -e \"let m=require('./src/manifest.json'); m.version=process.env.npm_package_version; require('fs').writeFileSync('./manifest.json', JSON.stringify(m, null, 2))\" && git add manifest.json"
+    "version": "node -e \"import('fs').then(fs => { const m = JSON.parse(fs.readFileSync('./src/manifest.json')); m.version = process.env.npm_package_version; fs.writeFileSync('./src/manifest.json', JSON.stringify(m, null, 2)); })\" && git add src/manifest.json"
   },
   "keywords": [],
   "author": "",
