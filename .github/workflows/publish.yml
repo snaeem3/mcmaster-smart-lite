@@ -23,9 +23,6 @@ jobs:
       - name: Build
         run: npm run build:bundle
 
-      - name: Install Zip
-        run: sudo apt-get update && sudo apt-get install -y zip
-
       - name: Zip extension
         run: |
           cd distribution
